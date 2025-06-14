@@ -23,6 +23,23 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  const linkVariants = {
+    initial: { opacity: 0.7 },
+    hover: { 
+      opacity: 1,
+      transition: { duration: 0.2 }
+    },
+    tap: { scale: 0.95 }
+  };
+
+  const underlineVariants = {
+    initial: { scaleX: 0, originX: 0 },
+    hover: { 
+      scaleX: 1,
+      transition: { duration: 0.3, ease: "easeOut" }
+    }
+  };
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
@@ -52,12 +69,17 @@ const Header = () => {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                variants={linkVariants}
+                whileHover="hover"
+                whileTap="tap"
                 onClick={() => scrollToSection(item.href)}
-                className="text-gray-700 hover:text-teal-600 transition-colors duration-300 font-medium"
+                className="relative text-gray-700 font-medium overflow-hidden"
               >
                 {item.name}
+                <motion.div
+                  variants={underlineVariants}
+                  className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-teal-500 to-cyan-500"
+                />
               </motion.button>
             ))}
           </nav>

@@ -66,6 +66,48 @@ const ChatDemo = () => {
     setInputValue(question);
   };
 
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const chatVariants = {
+    hidden: { 
+      scale: 0,
+      x: 100,
+      y: 100,
+      transition: { type: "spring", stiffness: 120, damping: 14 }
+    },
+    visible: { 
+      scale: 1,
+      x: 0,
+      y: 0,
+      transition: { type: "spring", stiffness: 120, damping: 14 }
+    }
+  };
+
+  const buttonVariants = {
+    closed: { rotate: 0 },
+    open: { rotate: 45 }
+  };
+
+  const rippleVariants = {
+    initial: { scale: 0, opacity: 1 },
+    animate: { 
+      scale: 2, 
+      opacity: 0,
+      transition: { duration: 0.5 }
+    }
+  };
+
+  const messageVariants = {
+    initial: { scale: 0.8, opacity: 0 },
+    animate: { 
+      scale: 1, 
+      opacity: 1,
+      transition: { duration: 0.3 }
+    }
+  };
+
   return (
     <section id="demo" className="py-20 relative">
       <div className="container mx-auto px-4">
@@ -144,28 +186,31 @@ const ChatDemo = () => {
 
             {/* Messages */}
             <div className="h-64 overflow-y-auto mb-4 space-y-4">
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
-                    message.sender === 'user'
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white'
-                      : 'glass text-gray-800'
-                  }`}>
-                    {message.sender === 'ai' && (
-                      <div className="flex items-center space-x-2 mb-1">
-                        <i className='bx bxs-pear text-xs text-teal-500'></i>
-                        <span className="text-xs font-medium text-teal-600">pearNI</span>
-                      </div>
-                    )}
-                    <p className="text-sm">{message.text}</p>
-                  </div>
-                </motion.div>
-              ))}
+              <AnimatePresence>
+                {messages.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    variants={messageVariants}
+                    initial="initial"
+                    animate="animate"
+                    className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                      message.sender === 'user'
+                        ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white'
+                        : 'glass text-gray-800'
+                    }`}>
+                      {message.sender === 'ai' && (
+                        <div className="flex items-center space-x-2 mb-1">
+                          <i className='bx bxs-pear text-xs text-teal-500'></i>
+                          <span className="text-xs font-medium text-teal-600">pearNI</span>
+                        </div>
+                      )}
+                      <p className="text-sm">{message.text}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
 
             {/* Input */}
@@ -182,14 +227,83 @@ const ChatDemo = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleSendMessage}
-                className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                className="relative bg-gradient-to-r from-teal-500 to-cyan-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
               >
                 <i className='bx bx-send'></i>
+                <motion.div
+                  variants={rippleVariants}
+                  initial="initial"
+                  animate="animate"
+                  className="absolute inset-0 bg-white/20 rounded-full"
+                />
               </motion.button>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* Floating Chat Button */}
+      <motion.button
+        variants={buttonVariants}
+        animate={isOpen ? "open" : "closed"}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleChat}
+        className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full shadow-2xl flex items-center justify-center z-40"
+      >
+        <i className='bx bxs-pear text-2xl'></i>
+      </motion.button>
+
+      {/* Floating Chat Widget */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            variants={chatVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed bottom-24 right-6 w-80 h-96 glass-card z-30"
+          >
+            {/* Mini Chat Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/20">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center">
+                  <i className='bx bxs-pear text-white text-sm'></i>
+                </div>
+                <span className="font-semibold text-gray-800">pearNI</span>
+              </div>
+              <button onClick={toggleChat} className="text-gray-500 hover:text-gray-700">
+                <i className='bx bx-x text-xl'></i>
+              </button>
+            </div>
+
+            {/* Mini Chat Body */}
+            <div className="flex-1 p-4 overflow-y-auto">
+              <div className="glass rounded-xl p-3 mb-4">
+                <p className="text-sm text-gray-700">Hi! I'm pearNI. Try the full demo above or ask me anything here.</p>
+              </div>
+            </div>
+
+            {/* Mini Chat Input */}
+            <div className="p-4 border-t border-white/20">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  className="flex-1 glass rounded-full px-3 py-2 text-sm text-gray-800 placeholder-gray-500 focus:outline-none"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white p-2 rounded-full"
+                >
+                  <i className='bx bx-send text-sm'></i>
+                </motion.button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

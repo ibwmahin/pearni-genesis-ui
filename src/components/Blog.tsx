@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const Blog = () => {
@@ -57,15 +57,63 @@ const Blog = () => {
       category: 'Environment',
       readTime: '5 min read',
       image: 'https://images.unsplash.com/photo-1569163139394-de4e4f43e4e5?auto=format&fit=crop&w=800&q=80'
+    },
+    // Additional posts for "Load More" functionality
+    {
+      id: 7,
+      title: 'Neural Architecture Evolution in AGI',
+      date: '2024-05-25',
+      excerpt: 'Advanced neural network architectures that enable more sophisticated reasoning and learning capabilities.',
+      category: 'Research',
+      readTime: '8 min read',
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      id: 8,
+      title: 'AGI in Drug Discovery: Accelerating Medicine',
+      date: '2024-05-22',
+      excerpt: 'Revolutionary applications of artificial general intelligence in pharmaceutical research and development.',
+      category: 'Science',
+      readTime: '6 min read',
+      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=800&q=80'
+    },
+    {
+      id: 9,
+      title: 'The Economics of AGI: Transforming Industries',
+      date: '2024-05-20',
+      excerpt: 'Economic implications and opportunities created by the widespread adoption of artificial general intelligence.',
+      category: 'Technology',
+      readTime: '7 min read',
+      image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=800&q=80'
     }
   ];
 
   const categories = ['All', 'Research', 'Ethics', 'Science', 'Technology', 'Environment'];
-  const [selectedCategory, setSelectedCategory] = React.useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [displayedPosts, setDisplayedPosts] = useState(6);
 
   const filteredPosts = selectedCategory === 'All' 
     ? blogPosts 
     : blogPosts.filter(post => post.category === selectedCategory);
+
+  const visiblePosts = filteredPosts.slice(0, displayedPosts);
+  const hasMore = displayedPosts < filteredPosts.length;
+
+  const handleLoadMore = () => {
+    setDisplayedPosts(prev => Math.min(prev + 6, filteredPosts.length));
+  };
+
+  const loadMoreVariants = {
+    initial: { x: 0, rotate: 0 },
+    loading: { 
+      x: [-10, 10, 0],
+      rotate: 90,
+      transition: { 
+        x: { duration: 0.3 },
+        rotate: { duration: 0.2, delay: 0.1 }
+      }
+    }
+  };
 
   return (
     <section id="blog" className="py-20 relative">
@@ -98,7 +146,10 @@ const Blog = () => {
               key={category}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory(category)}
+              onClick={() => {
+                setSelectedCategory(category);
+                setDisplayedPosts(6);
+              }}
               className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
                 selectedCategory === category
                   ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg'
@@ -112,7 +163,7 @@ const Blog = () => {
 
         {/* Blog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map((post, index) => (
+          {visiblePosts.map((post, index) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 30 }}
@@ -160,22 +211,26 @@ const Blog = () => {
         </div>
 
         {/* Load More */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="glass-button text-gray-700 font-semibold px-8 py-3"
+        {hasMore && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-center mt-12"
           >
-            <i className='bx bx-refresh mr-2'></i>
-            Load More Articles
-          </motion.button>
-        </motion.div>
+            <motion.button
+              variants={loadMoreVariants}
+              whileHover={{ scale: 1.05 }}
+              whileTap="loading"
+              onClick={handleLoadMore}
+              className="glass-button text-gray-700 font-semibold px-8 py-3"
+            >
+              <motion.i className='bx bx-refresh mr-2'></motion.i>
+              Load More Articles
+            </motion.button>
+          </motion.div>
+        )}
       </div>
     </section>
   );

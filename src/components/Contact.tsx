@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -15,11 +15,25 @@ const Contact = () => {
     message: false
   });
 
+  const [showToast, setShowToast] = useState(false);
+  const [formErrors, setFormErrors] = useState({
+    name: false,
+    email: false,
+    message: false
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear errors when user starts typing
+    if (formErrors[e.target.name as keyof typeof formErrors]) {
+      setFormErrors({
+        ...formErrors,
+        [e.target.name]: false
+      });
+    }
   };
 
   const handleFocus = (field: string) => {
@@ -38,13 +52,56 @@ const Contact = () => {
     }
   };
 
+  const validateForm = () => {
+    const errors = {
+      name: !formData.name.trim(),
+      email: !formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email),
+      message: !formData.message.trim()
+    };
+    
+    setFormErrors(errors);
+    return !Object.values(errors).some(error => error);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission here
-    alert('Thank you for your message! We\'ll get back to you soon.');
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    // Show success toast
+    setShowToast(true);
+    
+    // Reset form
     setFormData({ name: '', email: '', message: '' });
     setFocused({ name: false, email: false, message: false });
+    
+    // Auto-dismiss toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
+
+  const shakeVariants = {
+    shake: {
+      x: [0, -5, 5, -5, 5, 0],
+      transition: { duration: 0.5 }
+    }
+  };
+
+  const toastVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: -100,
+      backdrop: "rgba(0,0,0,0)"
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      backdrop: "rgba(0,0,0,0.1)",
+      transition: { duration: 0.4, ease: "easeOut" }
+    }
   };
 
   const contactInfo = [
@@ -106,7 +163,11 @@ const Contact = () => {
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
-              <div className="relative">
+              <motion.div 
+                className="relative"
+                variants={shakeVariants}
+                animate={formErrors.name ? "shake" : ""}
+              >
                 <input
                   type="text"
                   name="name"
@@ -114,7 +175,9 @@ const Contact = () => {
                   onChange={handleInputChange}
                   onFocus={() => handleFocus('name')}
                   onBlur={(e) => handleBlur('name', e.target.value)}
-                  className="w-full glass rounded-xl px-4 py-4 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all duration-300"
+                  className={`w-full glass rounded-xl px-4 py-4 text-gray-800 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                    formErrors.name ? 'focus:ring-red-500/50 ring-2 ring-red-500/50' : 'focus:ring-teal-500/50'
+                  }`}
                   required
                 />
                 <motion.label
@@ -122,17 +185,21 @@ const Contact = () => {
                   animate={{
                     y: focused.name || formData.name ? -24 : 0,
                     scale: focused.name || formData.name ? 0.8 : 1,
-                    color: focused.name ? '#14b8a6' : '#6b7280'
+                    color: formErrors.name ? '#ef4444' : focused.name ? '#14b8a6' : '#6b7280'
                   }}
-                  className="absolute left-4 top-4 text-gray-500 pointer-events-none origin-left transition-all duration-300"
+                  className="absolute left-4 top-4 pointer-events-none origin-left transition-all duration-300"
                 >
                   <i className='bx bx-user mr-2'></i>
                   Your Name
                 </motion.label>
-              </div>
+              </motion.div>
 
               {/* Email Field */}
-              <div className="relative">
+              <motion.div 
+                className="relative"
+                variants={shakeVariants}
+                animate={formErrors.email ? "shake" : ""}
+              >
                 <input
                   type="email"
                   name="email"
@@ -140,7 +207,9 @@ const Contact = () => {
                   onChange={handleInputChange}
                   onFocus={() => handleFocus('email')}
                   onBlur={(e) => handleBlur('email', e.target.value)}
-                  className="w-full glass rounded-xl px-4 py-4 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all duration-300"
+                  className={`w-full glass rounded-xl px-4 py-4 text-gray-800 focus:outline-none focus:ring-2 transition-all duration-300 ${
+                    formErrors.email ? 'focus:ring-red-500/50 ring-2 ring-red-500/50' : 'focus:ring-teal-500/50'
+                  }`}
                   required
                 />
                 <motion.label
@@ -148,17 +217,21 @@ const Contact = () => {
                   animate={{
                     y: focused.email || formData.email ? -24 : 0,
                     scale: focused.email || formData.email ? 0.8 : 1,
-                    color: focused.email ? '#14b8a6' : '#6b7280'
+                    color: formErrors.email ? '#ef4444' : focused.email ? '#14b8a6' : '#6b7280'
                   }}
-                  className="absolute left-4 top-4 text-gray-500 pointer-events-none origin-left transition-all duration-300"
+                  className="absolute left-4 top-4 pointer-events-none origin-left transition-all duration-300"
                 >
                   <i className='bx bx-envelope mr-2'></i>
                   Email Address
                 </motion.label>
-              </div>
+              </motion.div>
 
               {/* Message Field */}
-              <div className="relative">
+              <motion.div 
+                className="relative"
+                variants={shakeVariants}
+                animate={formErrors.message ? "shake" : ""}
+              >
                 <textarea
                   name="message"
                   value={formData.message}
@@ -166,7 +239,9 @@ const Contact = () => {
                   onFocus={() => handleFocus('message')}
                   onBlur={(e) => handleBlur('message', e.target.value)}
                   rows={5}
-                  className="w-full glass rounded-xl px-4 py-4 text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all duration-300 resize-none"
+                  className={`w-full glass rounded-xl px-4 py-4 text-gray-800 focus:outline-none focus:ring-2 transition-all duration-300 resize-none ${
+                    formErrors.message ? 'focus:ring-red-500/50 ring-2 ring-red-500/50' : 'focus:ring-teal-500/50'
+                  }`}
                   required
                 />
                 <motion.label
@@ -174,14 +249,14 @@ const Contact = () => {
                   animate={{
                     y: focused.message || formData.message ? -24 : 0,
                     scale: focused.message || formData.message ? 0.8 : 1,
-                    color: focused.message ? '#14b8a6' : '#6b7280'
+                    color: formErrors.message ? '#ef4444' : focused.message ? '#14b8a6' : '#6b7280'
                   }}
-                  className="absolute left-4 top-4 text-gray-500 pointer-events-none origin-left transition-all duration-300"
+                  className="absolute left-4 top-4 pointer-events-none origin-left transition-all duration-300"
                 >
                   <i className='bx bx-message mr-2'></i>
                   Your Message
                 </motion.label>
-              </div>
+              </motion.div>
 
               <motion.button
                 type="submit"
@@ -251,6 +326,31 @@ const Contact = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Success Toast */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            variants={toastVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
+          >
+            <div className="glass-card bg-green-500/20 border-green-500/30">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <i className='bx bx-check text-white'></i>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-green-800">Thank you!</h4>
+                  <p className="text-green-700">Your message has been sent successfully.</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
