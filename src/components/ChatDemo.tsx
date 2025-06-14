@@ -75,13 +75,13 @@ const ChatDemo = () => {
       scale: 0,
       x: 100,
       y: 100,
-      transition: { type: "spring", stiffness: 120, damping: 14 }
+      transition: { type: "spring" as const, stiffness: 120, damping: 14 }
     },
     visible: { 
       scale: 1,
       x: 0,
       y: 0,
-      transition: { type: "spring", stiffness: 120, damping: 14 }
+      transition: { type: "spring" as const, stiffness: 120, damping: 14 }
     }
   };
 

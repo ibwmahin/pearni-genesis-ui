@@ -36,7 +36,7 @@ const Header = () => {
     initial: { scaleX: 0, originX: 0 },
     hover: { 
       scaleX: 1,
-      transition: { duration: 0.3, ease: "easeOut" }
+      transition: { duration: 0.3 }
     }
   };
 

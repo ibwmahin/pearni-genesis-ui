@@ -93,14 +93,12 @@ const Contact = () => {
   const toastVariants = {
     hidden: { 
       opacity: 0, 
-      y: -100,
-      backdrop: "rgba(0,0,0,0)"
+      y: -100
     },
     visible: { 
       opacity: 1, 
       y: 0,
-      backdrop: "rgba(0,0,0,0.1)",
-      transition: { duration: 0.4, ease: "easeOut" }
+      transition: { duration: 0.4 }
     }
   };
 
