@@ -1,16 +1,15 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
 
 const Header = () => {
   const navItems = [
     { name: 'Home', href: '/' },
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
-    { name: 'pearNI', href: '#pearnI' },
+    { name: 'pearNI', href: '/nasa-chat' },
     { name: 'Demo', href: '#demo' },
-    { name: 'NASA Chat', href: '/nasa-chat' },
+    { name: 'Pricing', href: '#pricing' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -28,8 +27,7 @@ const Header = () => {
             <div className="flex items-center">
               {/* Brand */}
               <a href="/" className="flex items-center gap-2 text-gray-900 font-semibold pl-2 pr-4">
-                <Search className="w-5 h-5 text-gray-700" />
-                <span className="text-base">eco</span>
+                <span className="text-base">search</span>
               </a>
               {/* Divider */}
               <div className="w-px h-6 bg-black/10 hidden md:block" />
