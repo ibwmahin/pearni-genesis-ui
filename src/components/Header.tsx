@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -90,7 +89,7 @@ const Header = () => {
     visible: { 
       y: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
+      transition: { duration: 0.4, ease: 'easeOut' }
     }
   };
 
