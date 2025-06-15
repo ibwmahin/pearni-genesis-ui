@@ -24,7 +24,7 @@ const Hero = () => {
       scale: 1,
       y: 0,
       transition: { 
-        type: "spring",
+        type: "spring" as const,
         stiffness: 300,
         damping: 25,
         duration: 0.5
@@ -46,7 +46,7 @@ const Hero = () => {
       y: -2,
       boxShadow: '0 10px 40px rgba(34, 211, 238, 0.3)',
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 400,
         damping: 20
       }
@@ -61,7 +61,7 @@ const Hero = () => {
       transition: {
         duration: 6,
         repeat: Infinity,
-        ease: "easeInOut"
+        ease: "easeInOut" as const
       }
     }
   };
