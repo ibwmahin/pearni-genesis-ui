@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Search } from 'lucide-react';
 
 const Header = () => {
   const navItems = [
@@ -9,7 +10,7 @@ const Header = () => {
     { name: 'Features', href: '#features' },
     { name: 'pearNI', href: '/nasa-chat' },
     { name: 'Demo', href: '#demo' },
-    { name: 'Pricing', href: '#pricing' },
+    { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -27,6 +28,7 @@ const Header = () => {
             <div className="flex items-center">
               {/* Brand */}
               <a href="/" className="flex items-center gap-2 text-gray-900 font-semibold pl-2 pr-4">
+                <Search className="w-5 h-5 text-gray-700" />
                 <span className="text-base">search</span>
               </a>
               {/* Divider */}
@@ -49,7 +51,7 @@ const Header = () => {
             </div>
 
             {/* Early Access Button */}
-            <a href="#" className="ml-2 bg-gray-900 text-white text-sm px-4 py-2.5 rounded-full hover:bg-black transition-colors font-medium whitespace-nowrap">
+            <a href="/nasa-chat" className="ml-2 bg-gray-900 text-white text-sm px-4 py-2.5 rounded-full hover:bg-black transition-colors font-medium whitespace-nowrap">
               Early Access
             </a>
           </div>
