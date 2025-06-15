@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const BlogList = () => {
   const blogPosts = [
@@ -14,7 +14,8 @@ const BlogList = () => {
       image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
       tags: ['AGI', 'Future Tech', 'Intelligence'],
       author: 'Dr. Sarah Chen',
-      featured: true
+      featured: true,
+      link: '/blog/future-of-agi'
     },
     {
       id: 2,
@@ -26,7 +27,8 @@ const BlogList = () => {
       image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
       tags: ['Ethics', 'AI Safety', 'Responsibility'],
       author: 'Prof. Michael Torres',
-      featured: true
+      featured: true,
+      link: '/blog/ethical-ai'
     },
     {
       id: 3,
@@ -38,7 +40,8 @@ const BlogList = () => {
       image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=800&q=80',
       tags: ['Science', 'Discovery', 'Research'],
       author: 'Dr. Emily Watson',
-      featured: false
+      featured: false,
+      link: '/blog/scientific-breakthroughs'
     },
     {
       id: 4,
@@ -158,9 +161,11 @@ const BlogList = () => {
                 )}
               </div>
               
-              <h3 className="text-xl font-bold text-readable mb-2 hover:text-blue-600 transition-colors cursor-pointer">
-                {post.title}
-              </h3>
+              <Link to={post.link || '#'}>
+                <h3 className="text-xl font-bold text-readable mb-2 hover:text-blue-600 transition-colors cursor-pointer">
+                  {post.title}
+                </h3>
+              </Link>
               
               <p className="text-readable-muted mb-3 line-clamp-2">{post.excerpt}</p>
               

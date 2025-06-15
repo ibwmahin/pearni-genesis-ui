@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Blog = () => {
   const blogPosts = [
@@ -11,7 +11,8 @@ const Blog = () => {
       excerpt: 'Exploring the implications of artificial general intelligence that surpasses human cognitive abilities across all domains.',
       category: 'Research',
       readTime: '8 min read',
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80',
+      link: '/blog/future-of-agi'
     },
     {
       id: 2,
@@ -20,7 +21,8 @@ const Blog = () => {
       excerpt: 'How pearNI incorporates ethical frameworks and safety measures to ensure AGI development serves humanity.',
       category: 'Ethics',
       readTime: '6 min read',
-      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80',
+      link: '/blog/ethical-ai'
     },
     {
       id: 3,
@@ -29,7 +31,8 @@ const Blog = () => {
       excerpt: 'Real-world examples of how artificial intelligence is revolutionizing scientific discovery and research methodologies.',
       category: 'Science',
       readTime: '10 min read',
-      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=800&q=80'
+      image: 'https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=800&q=80',
+      link: '/blog/scientific-breakthroughs'
     },
     {
       id: 4,
@@ -198,13 +201,15 @@ const Blog = () => {
 
                 <p className="text-gray-600 line-clamp-3">{post.excerpt}</p>
 
-                <motion.div
-                  whileHover={{ x: 5 }}
-                  className="flex items-center text-teal-600 font-medium pt-2"
-                >
-                  <span>Read More</span>
-                  <i className='bx bx-arrow-right ml-2'></i>
-                </motion.div>
+                <Link to={post.link || '#'}>
+                  <motion.div
+                    whileHover={{ x: 5 }}
+                    className="flex items-center text-teal-600 font-medium pt-2"
+                  >
+                    <span>Read More</span>
+                    <i className='bx bx-arrow-right ml-2'></i>
+                  </motion.div>
+                </Link>
               </div>
             </motion.article>
           ))}

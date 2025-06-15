@@ -10,6 +10,9 @@ import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import MissionPlanner from "./pages/MissionPlanner";
+import BlogPost1 from "./pages/BlogPost1";
+import BlogPost2 from "./pages/BlogPost2";
+import BlogPost3 from "./pages/BlogPost3";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +28,9 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/mission-planner" element={<MissionPlanner />} />
+          <Route path="/blog/future-of-agi" element={<BlogPost1 />} />
+          <Route path="/blog/ethical-ai" element={<BlogPost2 />} />
+          <Route path="/blog/scientific-breakthroughs" element={<BlogPost3 />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
