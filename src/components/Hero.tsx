@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -137,12 +136,12 @@ const Hero = () => {
             </motion.div>
           </motion.div>
 
-          {/* Scroll Indicator */}
+          {/* Scroll Indicator - Fixed positioning */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.8 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20"
           >
             <motion.div
               animate={{ y: [0, 8, 0] }}
@@ -156,7 +155,6 @@ const Hero = () => {
         </div>
       </section>
 
-      {/* Demo Modal */}
       <AnimatePresence>
         {showDemo && (
           <>
