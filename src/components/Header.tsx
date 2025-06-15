@@ -12,7 +12,8 @@ const Header = () => {
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
     { name: 'pearNI', href: '/nasa-chat' },
-    { name: 'Dashboard', href: '/dashboard' }, // ADDED
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Mission Planner', href: '/mission-planner' },
     { name: 'Demo', href: '#demo' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '#contact' },

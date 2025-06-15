@@ -8,6 +8,7 @@ import NasaChat from "./pages/NasaChat";
 import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
+import MissionPlanner from "./pages/MissionPlanner";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/nasa-chat" element={<NasaChat />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/mission-planner" element={<MissionPlanner />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
