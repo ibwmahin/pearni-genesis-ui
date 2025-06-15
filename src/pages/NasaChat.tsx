@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUp, Sparkles, Image, Globe, Rocket, Settings } from 'lucide-react';
+import { ArrowUp, Send, User, Bot } from 'lucide-react';
 
 interface Message {
   id: number;
@@ -13,25 +13,30 @@ interface Message {
 }
 
 const NasaChat = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Hello! I'm your NASA AI assistant. I can help you explore space data, get astronomy pictures, Mars rover images, and much more. What would you like to discover today?",
-      sender: 'ai',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const NASA_API_KEY = 'k4aSEmynpTEbLNUsj6N1ISEAdv38O2Sg9IZ6FiKm';
 
-  const quickActions = [
-    { icon: Sparkles, text: "Today's Astronomy Picture", action: "Get today's APOD" },
-    { icon: Globe, text: "Mars Rover Photos", action: "Show me Mars rover photos" },
-    { icon: Rocket, text: "Near Earth Objects", action: "Find near Earth asteroids" },
-    { icon: Image, text: "NASA Image Library", action: "Search NASA images" }
+  const examplePrompts = [
+    {
+      icon: '🤔',
+      title: 'Ask complex questions',
+      example: 'What are the latest discoveries from the James Webb Space Telescope and how do they change our understanding of the universe?'
+    },
+    {
+      icon: '🏆',
+      title: 'Get better answers',
+      example: 'Compare the atmospheric conditions of Mars and Venus and explain which would be easier to terraform'
+    },
+    {
+      icon: '💡',
+      title: 'Get creative inspiration',
+      example: 'Write a poem about black holes in the style of Carl Sagan while explaining their scientific properties'
+    }
   ];
 
   const scrollToBottom = () => {
@@ -54,8 +59,6 @@ const NasaChat = () => {
       } else if (query.toLowerCase().includes('asteroid') || query.toLowerCase().includes('near earth')) {
         const today = new Date().toISOString().split('T')[0];
         apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=${NASA_API_KEY}`;
-      } else if (query.toLowerCase().includes('earth') && query.toLowerCase().includes('image')) {
-        apiUrl = `https://api.nasa.gov/planetary/earth/imagery?lon=100.75&lat=1.5&date=2014-02-01&api_key=${NASA_API_KEY}`;
       }
 
       if (apiUrl) {
@@ -100,12 +103,14 @@ const NasaChat = () => {
     }
 
     return {
-      text: "I can help you explore NASA's incredible data! Try asking about:\n• Today's astronomy picture\n• Mars rover photos\n• Near Earth asteroids\n• Earth imagery\n• Space weather\n• Exoplanets\n\nWhat interests you most?"
+      text: "I'm pearNI, your AI-powered assistant for space exploration and sustainable innovation. I can help you with:\n\n• Space data and astronomy\n• NASA mission information\n• Environmental analysis\n• Sustainable technology insights\n• Creative problem-solving\n\nWhat would you like to explore today?"
     };
   };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
+
+    setShowWelcome(false);
 
     const userMessage: Message = {
       id: messages.length + 1,
@@ -137,7 +142,7 @@ const NasaChat = () => {
     } catch (error) {
       const errorMessage: Message = {
         id: messages.length + 2,
-        text: "I'm having trouble connecting to NASA's servers right now. Please try again in a moment!",
+        text: "I'm having trouble processing your request right now. Please try again in a moment!",
         sender: 'ai',
         timestamp: new Date()
       };
@@ -151,69 +156,84 @@ const NasaChat = () => {
     setInputValue('');
   };
 
-  const handleQuickAction = (action: string) => {
-    setInputValue(action);
+  const handleExampleClick = (example: string) => {
+    setInputValue(example);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       {/* Header */}
-      <div className="sticky top-0 z-50 backdrop-blur-2xl bg-black/20 border-b border-white/10">
+      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center space-x-3"
-            >
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Rocket className="w-6 h-6 text-white" />
+            <div className="flex items-center space-x-4">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <i className='bx bxs-pear text-white text-lg'></i>
               </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">NASA AI Assistant</h1>
-                <p className="text-sm text-gray-300">Explore the cosmos with AI</p>
+              <h1 className="text-xl font-semibold text-gray-900">pearNI</h1>
+              <div className="hidden md:flex items-center space-x-6 ml-8">
+                <button className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-blue-600 transition-colors border-b-2 border-transparent hover:border-blue-600">
+                  <Bot className="w-4 h-4" />
+                  <span>CHAT</span>
+                </button>
               </div>
-            </motion.div>
-
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+            </div>
+            <button
               onClick={() => window.location.href = '/'}
-              className="glass-button text-white hover:text-cyan-300"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
             >
               Back to Home
-            </motion.button>
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6 h-[calc(100vh-88px)] flex flex-col">
-        {/* Quick Actions */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"
-        >
-          {quickActions.map((action, index) => (
-            <motion.button
-              key={action.text}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -2 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleQuickAction(action.action)}
-              className="glass-card p-4 text-center text-white hover:bg-white/10 transition-all duration-300"
-            >
-              <action.icon className="w-8 h-8 mx-auto mb-2 text-blue-400" />
-              <p className="text-sm font-medium">{action.text}</p>
-            </motion.button>
-          ))}
-        </motion.div>
+      <div className="max-w-4xl mx-auto p-6">
+        {showWelcome && messages.length === 0 ? (
+          // Welcome Screen
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mt-16 mb-12"
+          >
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-8">
+              <i className='bx bxs-pear text-white text-2xl'></i>
+            </div>
 
-        {/* Chat Messages */}
-        <div className="flex-1 glass-card mb-6 overflow-hidden">
-          <div className="h-full overflow-y-auto p-6 space-y-6">
+            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+              Welcome to pearNI
+            </h1>
+            <p className="text-xl text-gray-600 mb-16">
+              Your AI-powered space exploration and sustainability engine
+            </p>
+
+            {/* Example Cards */}
+            <div className="grid md:grid-cols-3 gap-6 mb-16">
+              {examplePrompts.map((prompt, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => handleExampleClick(prompt.example)}
+                  className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer group"
+                >
+                  <div className="text-3xl mb-4">{prompt.icon}</div>
+                  <h3 className="font-semibold text-gray-900 mb-3">{prompt.title}</h3>
+                  <p className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
+                    "{prompt.example}"
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            <p className="text-gray-500 text-sm mb-8">
+              Let's explore together. pearNI is powered by AI for space data, sustainability insights, and creative problem-solving.
+            </p>
+          </motion.div>
+        ) : (
+          // Chat Messages
+          <div className="space-y-6 mb-6 mt-8">
             <AnimatePresence>
               {messages.map((message) => (
                 <motion.div
@@ -221,43 +241,38 @@ const NasaChat = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className="flex space-x-4"
                 >
-                  <div className={`max-w-2xl ${message.sender === 'user' ? 'order-2' : ''}`}>
-                    {message.sender === 'ai' && (
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                          <Rocket className="w-4 h-4 text-white" />
-                        </div>
-                        <span className="text-sm font-medium text-blue-400">NASA AI</span>
+                  <div className="flex-shrink-0">
+                    {message.sender === 'user' ? (
+                      <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-gray-600" />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <i className='bx bxs-pear text-white text-sm'></i>
                       </div>
                     )}
-                    
-                    <div className={`rounded-2xl p-4 ${
-                      message.sender === 'user'
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white ml-auto'
-                        : 'glass text-white'
-                    }`}>
-                      <p className="whitespace-pre-wrap">{message.text}</p>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
+                      <p className="text-gray-800 whitespace-pre-wrap">{message.text}</p>
                       
                       {message.images && message.images.length > 0 && (
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           {message.images.map((imageUrl, index) => (
-                            <motion.img
+                            <img
                               key={index}
-                              initial={{ opacity: 0, scale: 0.8 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: index * 0.2 }}
                               src={imageUrl}
-                              alt={`NASA Image ${index + 1}`}
+                              alt={`Space Image ${index + 1}`}
                               className="rounded-xl w-full h-48 object-cover"
                             />
                           ))}
                         </div>
                       )}
                     </div>
-                    
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-gray-500 mt-2 ml-4">
                       {message.timestamp.toLocaleTimeString()}
                     </p>
                   </div>
@@ -269,13 +284,16 @@ const NasaChat = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex justify-start"
+                className="flex space-x-4"
               >
-                <div className="glass rounded-2xl p-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <i className='bx bxs-pear text-white text-sm'></i>
+                </div>
+                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
                   <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                 </div>
               </motion.div>
@@ -283,35 +301,45 @@ const NasaChat = () => {
 
             <div ref={messagesEndRef} />
           </div>
-        </div>
+        )}
 
         {/* Input Area */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-4"
-        >
-          <div className="flex space-x-4">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
-              placeholder="Ask about space, astronomy, Mars, or any NASA data..."
-              className="flex-1 bg-white/10 backdrop-blur-lg rounded-2xl px-6 py-4 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 border border-white/10"
-              disabled={isLoading}
-            />
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleSendMessage}
-              disabled={isLoading || !inputValue.trim()}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
-            >
-              <ArrowUp className="w-6 h-6" />
-            </motion.button>
+        <div className="sticky bottom-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
+            <div className="flex items-center space-x-4">
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <Send className="w-5 h-5 text-blue-600" />
+              </button>
+              
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
+                placeholder="Ask me anything about space, sustainability, or get creative inspiration..."
+                className="flex-1 outline-none text-gray-800 placeholder-gray-500"
+                disabled={isLoading}
+              />
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleSendMessage}
+                disabled={isLoading || !inputValue.trim()}
+                className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ArrowUp className="w-5 h-5" />
+              </motion.button>
+            </div>
+            
+            <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+              <span>0/{inputValue.length}</span>
+              <button className="hover:text-gray-700 transition-colors">
+                Feedback
+              </button>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
