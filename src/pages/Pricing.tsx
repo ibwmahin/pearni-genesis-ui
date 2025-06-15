@@ -1,11 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Mail, Loader } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const Pricing = () => {
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+
   const plans = [
     {
       name: 'Starter',
@@ -60,12 +64,76 @@ const Pricing = () => {
     }
   ];
 
+  const handlePlanSelection = async (plan: typeof plans[0]) => {
+    setIsLoading(plan.name);
+    setNotification(null);
+
+    try {
+      // Initialize EmailJS (you'll need to replace these with your actual keys)
+      // For now, using placeholder keys - user will need to set up EmailJS account
+      const serviceId = 'your_service_id';
+      const templateId = 'your_template_id';
+      const publicKey = 'your_public_key';
+
+      const templateParams = {
+        plan_name: plan.name,
+        plan_price: plan.price + plan.period,
+        plan_description: plan.description,
+        plan_features: plan.features.join(', '),
+        user_timestamp: new Date().toLocaleString(),
+        user_agent: navigator.userAgent,
+        page_url: window.location.href,
+        to_email: 'your-email@example.com' // Replace with your email
+      };
+
+      // For demo purposes, we'll simulate the email sending
+      // In production, replace this with actual EmailJS call:
+      // await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      
+      // Simulated delay for demo
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('Plan selection sent:', templateParams);
+      
+      setNotification({
+        type: 'success',
+        message: `Thank you! We've received your interest in the ${plan.name} plan. We'll contact you soon!`
+      });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setNotification({
+        type: 'error',
+        message: 'Sorry, there was an error processing your request. Please try again.'
+      });
+    } finally {
+      setIsLoading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <Header />
       
       <main className="pt-32 pb-16">
         <div className="max-w-7xl mx-auto px-6">
+          {/* Notification */}
+          {notification && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 p-4 rounded-lg shadow-lg ${
+                notification.type === 'success' 
+                  ? 'bg-green-100 border border-green-400 text-green-700' 
+                  : 'bg-red-100 border border-red-400 text-red-700'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Mail className="w-5 h-5" />
+                {notification.message}
+              </div>
+            </motion.div>
+          )}
+
           {/* Header Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -121,13 +189,22 @@ const Pricing = () => {
                 </ul>
 
                 <button
-                  className={`w-full py-3 px-6 rounded-full font-medium transition-colors ${
+                  onClick={() => handlePlanSelection(plan)}
+                  disabled={isLoading === plan.name}
+                  className={`w-full py-3 px-6 rounded-full font-medium transition-colors flex items-center justify-center gap-2 ${
                     plan.popular
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 disabled:bg-gray-50'
                   }`}
                 >
-                  {plan.buttonText}
+                  {isLoading === plan.name ? (
+                    <>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    plan.buttonText
+                  )}
                 </button>
               </motion.div>
             ))}

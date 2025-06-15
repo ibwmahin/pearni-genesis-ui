@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const ChatDemo = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +13,7 @@ const ChatDemo = () => {
     }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const navigate = useNavigate();
 
   const sampleQuestions = [
     "Explain CRISPR in one sentence",
@@ -67,6 +69,11 @@ const ChatDemo = () => {
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
+  };
+
+  // Navigate to pearNI page instead of opening chat
+  const handlePearNIClick = () => {
+    navigate('/nasa-chat');
   };
 
   const chatVariants = {
@@ -252,18 +259,17 @@ const ChatDemo = () => {
         </div>
       </div>
 
-      {/* Floating Chat Button */}
+      {/* Floating PearNI Button - Now navigates to NASA Chat */}
       <motion.button
-        animate={isOpen ? { rotate: 45 } : { rotate: 0 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={toggleChat}
+        onClick={handlePearNIClick}
         className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-full shadow-2xl flex items-center justify-center z-40"
       >
         <i className='bx bxs-pear text-2xl'></i>
       </motion.button>
 
-      {/* Floating Chat Widget - Fixed positioning */}
+      {/* Floating Chat Widget - Keep for demo purposes */}
       <AnimatePresence>
         {isOpen && (
           <motion.div

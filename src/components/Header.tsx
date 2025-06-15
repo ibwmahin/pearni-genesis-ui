@@ -11,7 +11,6 @@ const Header = () => {
     { name: 'Home', href: '/' },
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
-    { name: 'pearNI', href: '/nasa-chat' },
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Mission Planner', href: '/mission-planner' },
     { name: 'Demo', href: '#demo' },
@@ -59,7 +58,7 @@ const Header = () => {
                 </nav>
               </div>
 
-              {/* Early Access Button */}
+              {/* Early Access Button - Now leads to NASA Chat */}
               <a href="/nasa-chat" className="ml-2 bg-gray-900 text-white text-sm px-4 py-2.5 rounded-full hover:bg-black transition-colors font-medium whitespace-nowrap">
                 Early Access
               </a>
