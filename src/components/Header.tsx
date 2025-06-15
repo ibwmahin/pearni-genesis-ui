@@ -5,8 +5,12 @@ import { Search } from 'lucide-react';
 
 const Header = () => {
   const navItems = [
-    { name: 'Docs', href: '/docs' },
-    { name: 'Blog', href: '/blog' },
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '#about' },
+    { name: 'Features', href: '#features' },
+    { name: 'pearNI', href: '#pearnI' },
+    { name: 'Demo', href: '#demo' },
+    { name: 'NASA Chat', href: '/nasa-chat' },
     { name: 'Contact', href: '#contact' },
   ];
 
@@ -36,7 +40,7 @@ const Header = () => {
                   <React.Fragment key={item.name}>
                     <a
                       href={item.href}
-                      className="px-4 py-2 text-sm text-gray-700 hover:text-gray-950 transition-colors"
+                      className="px-3 py-2 text-sm text-gray-700 hover:text-gray-950 transition-colors"
                     >
                       {item.name}
                     </a>
