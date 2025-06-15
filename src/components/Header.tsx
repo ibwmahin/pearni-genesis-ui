@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -54,7 +55,7 @@ const Header = () => {
   };
 
   const navLinkVariants = {
-    initial: { opacity: 0.7 },
+    initial: { opacity: 0.8 },
     hover: { 
       opacity: 1,
       y: -2,
@@ -89,7 +90,7 @@ const Header = () => {
     visible: { 
       y: 0,
       opacity: 1,
-      transition: { duration: 0.4 }
+      transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
     }
   };
 
@@ -108,7 +109,7 @@ const Header = () => {
           height: isScrolled ? '72px' : '80px'
         }}
         transition={{ duration: 0.6 }}
-        className="sticky top-0 z-50 backdrop-blur-2xl bg-white/10 border-b border-white/10 shadow-xl"
+        className="sticky top-0 z-50 backdrop-blur-2xl bg-black/20 border-b border-white/20 shadow-xl"
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
           {/* Left Navigation Items - Desktop */}
@@ -123,8 +124,8 @@ const Header = () => {
                 onClick={() => scrollToSection(item.href)}
                 className={`relative transition-colors duration-300 ${
                   activeSection === item.href.slice(1) 
-                    ? 'text-cyan-400' 
-                    : 'text-white/70 hover:text-white'
+                    ? 'text-cyan-300 font-semibold' 
+                    : 'text-white hover:text-cyan-200'
                 }`}
               >
                 {item.name}
@@ -150,7 +151,7 @@ const Header = () => {
             whileHover="hover"
             whileTap="tap"
             onClick={() => scrollToSection('#hero')}
-            className="bg-white/15 backdrop-blur-lg rounded-full px-6 py-3 flex items-center gap-3 shadow-xl ring-1 ring-white/20 cursor-pointer"
+            className="bg-white/20 backdrop-blur-lg rounded-full px-6 py-3 flex items-center gap-3 shadow-xl ring-1 ring-white/30 cursor-pointer border border-white/10"
           >
             <motion.i 
               className='bx bxs-pear text-cyan-400 text-2xl'
@@ -163,7 +164,7 @@ const Header = () => {
               }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            <span className="text-white font-semibold tracking-wide hidden sm:block">
+            <span className="text-white font-bold tracking-wide hidden sm:block text-shadow">
               pearNI
             </span>
           </motion.button>
@@ -180,8 +181,8 @@ const Header = () => {
                 onClick={() => scrollToSection(item.href)}
                 className={`relative transition-colors duration-300 ${
                   activeSection === item.href.slice(1) 
-                    ? 'text-cyan-400' 
-                    : 'text-white/70 hover:text-white'
+                    ? 'text-cyan-300 font-semibold' 
+                    : 'text-white hover:text-cyan-200'
                 }`}
               >
                 {item.name}
@@ -204,7 +205,7 @@ const Header = () => {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden bg-white/15 backdrop-blur-lg rounded-full p-3 ring-1 ring-white/20"
+            className="md:hidden bg-white/20 backdrop-blur-lg rounded-full p-3 ring-1 ring-white/30 border border-white/10"
           >
             <motion.i 
               className={`bx ${isMenuOpen ? 'bx-x' : 'bx-menu'} text-xl text-white`}
