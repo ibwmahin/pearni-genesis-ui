@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
@@ -145,7 +144,7 @@ const Header = () => {
           </div>
 
           {/* Center Notch / Brand */}
-          <motion.div
+          <motion.button
             variants={notchVariants}
             initial="initial"
             whileHover="hover"
@@ -167,7 +166,7 @@ const Header = () => {
             <span className="text-white font-semibold tracking-wide hidden sm:block">
               pearNI
             </span>
-          </motion.div>
+          </motion.button>
 
           {/* Right Navigation Items - Desktop */}
           <div className="hidden md:flex gap-8 text-sm font-medium">
