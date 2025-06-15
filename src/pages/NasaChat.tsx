@@ -1,7 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUp, Send, User, Bot } from 'lucide-react';
+import { ArrowUp, Send, User, Bot, Settings, Zap } from 'lucide-react';
+import { apiService } from '../services/apiService';
+import APIKeyManager from '../components/APIKeyManager';
 
 interface Message {
   id: number;
@@ -9,7 +11,8 @@ interface Message {
   sender: 'user' | 'ai';
   timestamp: Date;
   images?: string[];
-  apiData?: any;
+  isStreaming?: boolean;
+  nasaData?: any;
 }
 
 const NasaChat = () => {
@@ -17,103 +20,49 @@ const NasaChat = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [showAPIManager, setShowAPIManager] = useState(false);
+  const [hasAPIKeys, setHasAPIKeys] = useState(false);
+  const [streamingMessageId, setStreamingMessageId] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const NASA_API_KEY = 'k4aSEmynpTEbLNUsj6N1ISEAdv38O2Sg9IZ6FiKm';
 
   const examplePrompts = [
     {
-      icon: '🤔',
-      title: 'Ask complex questions',
+      icon: '🚀',
+      title: 'Space Exploration',
       example: 'What are the latest discoveries from the James Webb Space Telescope and how do they change our understanding of the universe?'
     },
     {
-      icon: '🏆',
-      title: 'Get better answers',
+      icon: '🔬',
+      title: 'Scientific Analysis',
       example: 'Compare the atmospheric conditions of Mars and Venus and explain which would be easier to terraform'
     },
     {
-      icon: '💡',
-      title: 'Get creative inspiration',
+      icon: '🎨',
+      title: 'Creative Insights',
       example: 'Write a poem about black holes in the style of Carl Sagan while explaining their scientific properties'
     }
   ];
+
+  useEffect(() => {
+    setHasAPIKeys(apiService.hasAPIKeys());
+    scrollToBottom();
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const callNasaAPI = async (query: string) => {
-    try {
-      let apiUrl = '';
-      let responseData = null;
-
-      if (query.toLowerCase().includes('apod') || query.toLowerCase().includes('astronomy picture')) {
-        apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`;
-      } else if (query.toLowerCase().includes('mars') && query.toLowerCase().includes('rover')) {
-        apiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=${NASA_API_KEY}`;
-      } else if (query.toLowerCase().includes('asteroid') || query.toLowerCase().includes('near earth')) {
-        const today = new Date().toISOString().split('T')[0];
-        apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=${NASA_API_KEY}`;
-      }
-
-      if (apiUrl) {
-        const response = await fetch(apiUrl);
-        responseData = await response.json();
-      }
-
-      return responseData;
-    } catch (error) {
-      console.error('NASA API Error:', error);
-      return null;
-    }
-  };
-
-  const generateResponse = (query: string, apiData: any) => {
-    if (query.toLowerCase().includes('apod') || query.toLowerCase().includes('astronomy picture')) {
-      if (apiData && apiData.url) {
-        return {
-          text: `Here's today's Astronomy Picture of the Day: "${apiData.title}"\n\n${apiData.explanation}`,
-          images: [apiData.url]
-        };
-      }
-    } else if (query.toLowerCase().includes('mars') && query.toLowerCase().includes('rover')) {
-      if (apiData && apiData.photos && apiData.photos.length > 0) {
-        const photos = apiData.photos.slice(0, 3);
-        return {
-          text: `Here are some amazing photos from the Curiosity rover on Mars! These were taken on Sol ${photos[0].sol} using the ${photos[0].camera.full_name}.`,
-          images: photos.map((photo: any) => photo.img_src)
-        };
-      }
-    } else if (query.toLowerCase().includes('asteroid') || query.toLowerCase().includes('near earth')) {
-      if (apiData && apiData.near_earth_objects) {
-        const today = new Date().toISOString().split('T')[0];
-        const asteroids = apiData.near_earth_objects[today] || [];
-        if (asteroids.length > 0) {
-          const asteroid = asteroids[0];
-          return {
-            text: `Found ${asteroids.length} near-Earth objects today! Here's one: "${asteroid.name}" - estimated diameter: ${Math.round(asteroid.estimated_diameter.meters.estimated_diameter_max)} meters. ${asteroid.is_potentially_hazardous_asteroid ? 'This asteroid is potentially hazardous.' : 'This asteroid is not considered hazardous.'}`
-          };
-        }
-      }
-    }
-
-    return {
-      text: "I'm pearNI, your AI-powered assistant for space exploration and sustainable innovation. I can help you with:\n\n• Space data and astronomy\n• NASA mission information\n• Environmental analysis\n• Sustainable technology insights\n• Creative problem-solving\n\nWhat would you like to explore today?"
-    };
-  };
-
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
-    setShowWelcome(false);
+    if (!hasAPIKeys) {
+      setShowAPIManager(true);
+      return;
+    }
 
+    setShowWelcome(false);
     const userMessage: Message = {
-      id: messages.length + 1,
+      id: Date.now(),
       text: inputValue,
       sender: 'user',
       timestamp: new Date()
@@ -122,42 +71,107 @@ const NasaChat = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
+    const aiMessageId = Date.now() + 1;
+    const aiMessage: Message = {
+      id: aiMessageId,
+      text: '',
+      sender: 'ai',
+      timestamp: new Date(),
+      isStreaming: true
+    };
+
+    setMessages(prev => [...prev, aiMessage]);
+    setStreamingMessageId(aiMessageId);
+
     try {
-      const apiData = await callNasaAPI(inputValue);
-      const response = generateResponse(inputValue, apiData);
+      apiService.addToConversation('user', inputValue);
+      const result = await apiService.processQuery(inputValue);
 
-      const aiMessage: Message = {
-        id: messages.length + 2,
-        text: response.text,
-        sender: 'ai',
-        timestamp: new Date(),
-        images: response.images,
-        apiData
-      };
+      let fullResponse = '';
+      
+      for await (const chunk of result.stream) {
+        fullResponse += chunk;
+        setMessages(prev => prev.map(msg => 
+          msg.id === aiMessageId 
+            ? { ...msg, text: fullResponse, nasaData: result.nasaData }
+            : msg
+        ));
+      }
 
-      setTimeout(() => {
-        setMessages(prev => [...prev, aiMessage]);
-        setIsLoading(false);
-      }, 1000);
+      // Final update to mark streaming as complete
+      setMessages(prev => prev.map(msg => 
+        msg.id === aiMessageId 
+          ? { ...msg, isStreaming: false }
+          : msg
+      ));
+
+      apiService.addToConversation('assistant', fullResponse, result.nasaData);
+
     } catch (error) {
-      const errorMessage: Message = {
-        id: messages.length + 2,
-        text: "I'm having trouble processing your request right now. Please try again in a moment!",
-        sender: 'ai',
-        timestamp: new Date()
-      };
+      console.error('Error processing message:', error);
+      const errorMessage = `I'm having trouble processing your request. ${
+        error instanceof Error ? error.message : 'Please check your API keys and try again.'
+      }`;
 
-      setTimeout(() => {
-        setMessages(prev => [...prev, errorMessage]);
-        setIsLoading(false);
-      }, 1000);
+      setMessages(prev => prev.map(msg => 
+        msg.id === aiMessageId 
+          ? { ...msg, text: errorMessage, isStreaming: false }
+          : msg
+      ));
     }
 
+    setIsLoading(false);
+    setStreamingMessageId(null);
     setInputValue('');
   };
 
   const handleExampleClick = (example: string) => {
     setInputValue(example);
+  };
+
+  const handleAPIKeysSet = () => {
+    setHasAPIKeys(apiService.hasAPIKeys());
+  };
+
+  const clearConversation = () => {
+    setMessages([]);
+    setShowWelcome(true);
+    apiService.clearConversation();
+  };
+
+  const renderNASAData = (nasaData: any) => {
+    if (!nasaData) return null;
+
+    if (nasaData.url && nasaData.title) {
+      // APOD data
+      return (
+        <div className="mt-4 border border-gray-200 rounded-xl overflow-hidden">
+          <img src={nasaData.url} alt={nasaData.title} className="w-full h-48 object-cover" />
+          <div className="p-3 bg-gray-50">
+            <p className="text-sm font-medium text-gray-800">{nasaData.title}</p>
+            <p className="text-xs text-gray-600 mt-1">NASA Astronomy Picture of the Day</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (nasaData.photos && nasaData.photos.length > 0) {
+      // Mars rover photos
+      return (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          {nasaData.photos.slice(0, 4).map((photo: any, index: number) => (
+            <img
+              key={index}
+              src={photo.img_src}
+              alt={`Mars rover photo ${index + 1}`}
+              className="rounded-lg w-full h-32 object-cover"
+            />
+          ))}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -178,12 +192,29 @@ const NasaChat = () => {
                 </button>
               </div>
             </div>
-            <button
-              onClick={() => window.location.href = '/'}
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Back to Home
-            </button>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setShowAPIManager(true)}
+                className={`p-2 rounded-lg transition-colors ${hasAPIKeys ? 'text-green-600 bg-green-50' : 'text-gray-600 hover:bg-gray-100'}`}
+                title="API Configuration"
+              >
+                <Settings className="w-5 h-5" />
+              </button>
+              {messages.length > 0 && (
+                <button
+                  onClick={clearConversation}
+                  className="text-gray-600 hover:text-gray-900 transition-colors text-sm"
+                >
+                  Clear Chat
+                </button>
+              )}
+              <button
+                onClick={() => window.location.href = '/'}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Back to Home
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -203,9 +234,30 @@ const NasaChat = () => {
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               Welcome to pearNI
             </h1>
-            <p className="text-xl text-gray-600 mb-16">
+            <p className="text-xl text-gray-600 mb-8">
               Your AI-powered space exploration and sustainability engine
             </p>
+
+            {!hasAPIKeys && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-xl"
+              >
+                <div className="flex items-center justify-center space-x-3">
+                  <Zap className="w-5 h-5 text-amber-600" />
+                  <p className="text-amber-800">
+                    <strong>Setup Required:</strong> Configure your API keys to unlock full functionality
+                  </p>
+                  <button
+                    onClick={() => setShowAPIManager(true)}
+                    className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors text-sm"
+                  >
+                    Configure
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
             {/* Example Cards */}
             <div className="grid md:grid-cols-3 gap-6 mb-16">
@@ -228,7 +280,7 @@ const NasaChat = () => {
             </div>
 
             <p className="text-gray-500 text-sm mb-8">
-              Let's explore together. pearNI is powered by AI for space data, sustainability insights, and creative problem-solving.
+              Let's explore together. pearNI combines NASA data with advanced AI for space insights and creative problem-solving.
             </p>
           </motion.div>
         ) : (
@@ -257,20 +309,14 @@ const NasaChat = () => {
                   
                   <div className="flex-1">
                     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                      <p className="text-gray-800 whitespace-pre-wrap">{message.text}</p>
+                      <p className="text-gray-800 whitespace-pre-wrap">
+                        {message.text}
+                        {message.isStreaming && (
+                          <span className="inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse" />
+                        )}
+                      </p>
                       
-                      {message.images && message.images.length > 0 && (
-                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {message.images.map((imageUrl, index) => (
-                            <img
-                              key={index}
-                              src={imageUrl}
-                              alt={`Space Image ${index + 1}`}
-                              className="rounded-xl w-full h-48 object-cover"
-                            />
-                          ))}
-                        </div>
-                      )}
+                      {renderNASAData(message.nasaData)}
                     </div>
                     <p className="text-xs text-gray-500 mt-2 ml-4">
                       {message.timestamp.toLocaleTimeString()}
@@ -280,25 +326,6 @@ const NasaChat = () => {
               ))}
             </AnimatePresence>
 
-            {isLoading && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex space-x-4"
-              >
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <i className='bx bxs-pear text-white text-sm'></i>
-                </div>
-                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
             <div ref={messagesEndRef} />
           </div>
         )}
@@ -307,8 +334,12 @@ const NasaChat = () => {
         <div className="sticky bottom-6">
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
             <div className="flex items-center space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <Send className="w-5 h-5 text-blue-600" />
+              <button 
+                onClick={() => setShowAPIManager(true)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="API Settings"
+              >
+                <Settings className="w-5 h-5 text-blue-600" />
               </button>
               
               <input
@@ -316,7 +347,7 @@ const NasaChat = () => {
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
-                placeholder="Ask me anything about space, sustainability, or get creative inspiration..."
+                placeholder={hasAPIKeys ? "Ask me anything about space, sustainability, or get creative inspiration..." : "Configure API keys to start chatting..."}
                 className="flex-1 outline-none text-gray-800 placeholder-gray-500"
                 disabled={isLoading}
               />
@@ -325,7 +356,7 @@ const NasaChat = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={handleSendMessage}
-                disabled={isLoading || !inputValue.trim()}
+                disabled={isLoading || !inputValue.trim() || !hasAPIKeys}
                 className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowUp className="w-5 h-5" />
@@ -333,14 +364,29 @@ const NasaChat = () => {
             </div>
             
             <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
-              <span>0/{inputValue.length}</span>
-              <button className="hover:text-gray-700 transition-colors">
-                Feedback
-              </button>
+              <span>{inputValue.length}/4000</span>
+              <div className="flex items-center space-x-4">
+                {hasAPIKeys && (
+                  <span className="text-green-600 flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+                    AI Ready
+                  </span>
+                )}
+                <button className="hover:text-gray-700 transition-colors">
+                  Powered by Gemini & NASA
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* API Key Manager Modal */}
+      <APIKeyManager
+        isOpen={showAPIManager}
+        onClose={() => setShowAPIManager(false)}
+        onKeysSet={handleAPIKeysSet}
+      />
     </div>
   );
 };
