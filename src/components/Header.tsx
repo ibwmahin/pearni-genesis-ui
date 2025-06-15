@@ -11,7 +11,7 @@ const Header = () => {
     { name: 'Home', href: '/' },
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
-    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Solar System', href: '/dashboard' }, // <-- Added "Solar System"
     { name: 'Mission Planner', href: '/mission-planner' },
     { name: 'Demo', href: '#demo' },
     { name: 'Pricing', href: '/pricing' },
