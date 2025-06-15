@@ -9,11 +9,16 @@ const Header = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const location = useLocation();
 
-  const navItems = [
-    { name: 'Docs', href: '#about' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Contact', href: '#contact' },
-    { name: 'NASA Chat', href: '/nasa-chat' }
+  const leftNavItems = [
+    { name: 'Home', href: '#hero' },
+    { name: 'About', href: '#about' },
+    { name: 'Features', href: '#features' }
+  ];
+
+  const rightNavItems = [
+    { name: 'Demo', href: '#demo' },
+    { name: 'NASA Chat', href: '/nasa-chat' },
+    { name: 'Contact', href: '#contact' }
   ];
 
   // Handle scroll effects
@@ -64,8 +69,7 @@ const Header = () => {
       opacity: 1,
       transition: {
         duration: 0.4,
-        type: "tween",
-        ease: "easeOut"
+        ease: [0.25, 0.46, 0.45, 0.94]
       }
     }
   };
@@ -81,118 +85,133 @@ const Header = () => {
         initial={{ y: -100, opacity: 0 }}
         animate={{
           y: 0,
-          opacity: 1
+          opacity: 1,
+          height: isScrolled ? '72px' : '80px'
         }}
         transition={{ duration: 0.6 }}
-        className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl px-4"
+        className="sticky top-0 z-50 backdrop-blur-2xl bg-black/20 border-b border-white/20 shadow-xl"
       >
-        <div className="bg-white/10 backdrop-blur-xl rounded-full border border-white/20 shadow-2xl">
-          <div className="flex justify-between items-center py-3 px-6">
-            {/* Brand Logo */}
-            <motion.button
-              initial={{ scale: 1 }}
-              whileHover={{
-                scale: 1.05,
-                transition: { duration: 0.2 }
-              }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => scrollToSection('#hero')}
-              className="flex items-center gap-2"
-            >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-cyan-400 to-teal-400 flex items-center justify-center">
-                <motion.i
-                  className='bx bxs-pear text-white text-lg'
-                  animate={{
-                    rotate: [0, 5, -5, 0]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                />
-              </div>
-              <span className="text-white font-bold text-lg tracking-wide">
-                eco
-              </span>
-            </motion.button>
-
-            {/* Navigation Items - Desktop */}
-            <div className="hidden md:flex items-center gap-8">
-              {navItems.map(item => (
-                <motion.button
-                  key={item.name}
-                  initial={{ opacity: 0.8 }}
-                  whileHover={{
-                    opacity: 1,
-                    y: -1,
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => scrollToSection(item.href)}
-                  className="relative text-white/80 hover:text-white transition-colors duration-300 text-sm font-medium"
-                >
-                  {item.name}
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    whileHover={{
-                      scaleX: 1,
-                      transition: { duration: 0.3 }
-                    }}
-                    className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full origin-left"
-                  />
-                </motion.button>
-              ))}
-            </div>
-
-            {/* Early Access Button */}
-            <div className="hidden md:flex items-center gap-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
+          {/* Left Navigation Items - Desktop */}
+          <div className="hidden md:flex gap-8 text-sm font-medium rounded-full">
+            {leftNavItems.map(item => (
               <motion.button
+                key={item.name}
+                initial={{ opacity: 0.8 }}
                 whileHover={{
-                  scale: 1.05,
+                  opacity: 1,
+                  y: -2,
                   transition: { duration: 0.2 }
                 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => scrollToSection('#demo')}
-                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-lg border border-white/30 transition-all duration-300"
+                whileTap={{ scale: 0.95 }}
+                onClick={() => scrollToSection(item.href)}
+                className={`relative transition-colors duration-300 ${
+                  activeSection === item.href.slice(1)
+                    ? 'text-cyan-300 font-semibold'
+                    : 'text-white hover:text-cyan-200'
+                }`}
               >
-                Early Access
+                {item.name}
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  whileHover={{
+                    scaleX: 1,
+                    transition: { duration: 0.3 }
+                  }}
+                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full origin-left"
+                />
+                {activeSection === item.href.slice(1) && (
+                  <motion.div
+                    layoutId="activeIndicator"
+                    className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full"
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
               </motion.button>
-              
-              {/* Discord and X Icons */}
-              <div className="flex items-center gap-2">
-                <motion.a
-                  href="#"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300"
-                >
-                  <i className='bx bxl-discord text-white text-sm'></i>
-                </motion.a>
-                <motion.a
-                  href="#"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-300"
-                >
-                  <i className='bx bxl-twitter text-white text-sm'></i>
-                </motion.a>
-              </div>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden bg-white/20 backdrop-blur-lg rounded-full p-2 ring-1 ring-white/30 border border-white/10"
-            >
-              <motion.i
-                className={`bx ${isMenuOpen ? 'bx-x' : 'bx-menu'} text-lg text-white`}
-                animate={{ rotate: isMenuOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.button>
+            ))}
           </div>
+
+          {/* Center Notch / Brand */}
+          <motion.button
+            initial={{ scale: 1 }}
+            whileHover={{
+              scale: 1.05,
+              transition: { duration: 0.2 }
+            }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => scrollToSection('#hero')}
+            className="bg-white/20 backdrop-blur-lg rounded-full px-6 py-3 flex items-center gap-3 shadow-xl ring-1 ring-white/30 cursor-pointer border border-white/10"
+          >
+            <motion.i
+              className='bx bxs-pear text-cyan-400 text-2xl'
+              animate={{
+                textShadow: [
+                  '0 0 10px rgba(34, 211, 238, 0.5)',
+                  '0 0 20px rgba(34, 211, 238, 0.8)',
+                  '0 0 10px rgba(34, 211, 238, 0.5)'
+                ]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity
+              }}
+            />
+            <span className="text-white font-bold tracking-wide hidden sm:block text-shadow">
+              pearNI
+            </span>
+          </motion.button>
+
+          {/* Right Navigation Items - Desktop */}
+          <div className="hidden md:flex gap-8 text-sm font-medium">
+            {rightNavItems.map(item => (
+              <motion.button
+                key={item.name}
+                initial={{ opacity: 0.8 }}
+                whileHover={{
+                  opacity: 1,
+                  y: -2,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => scrollToSection(item.href)}
+                className={`relative transition-colors duration-300 ${
+                  activeSection === item.href.slice(1)
+                    ? 'text-cyan-300 font-semibold'
+                    : 'text-white hover:text-cyan-200'
+                }`}
+              >
+                {item.name}
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  whileHover={{
+                    scaleX: 1,
+                    transition: { duration: 0.3 }
+                  }}
+                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full origin-left"
+                />
+                {activeSection === item.href.slice(1) && (
+                  <motion.div
+                    layoutId="activeIndicatorRight"
+                    className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full"
+                    transition={{ duration: 0.3 }}
+                  />
+                )}
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden bg-white/20 backdrop-blur-lg rounded-full p-3 ring-1 ring-white/30 border border-white/10"
+          >
+            <motion.i
+              className={`bx ${isMenuOpen ? 'bx-x' : 'bx-menu'} text-xl text-white`}
+              animate={{ rotate: isMenuOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            />
+          </motion.button>
         </div>
       </motion.nav>
 
@@ -219,16 +238,22 @@ const Header = () => {
                 <div className="w-12 h-1 bg-white/40 rounded-full mx-auto mb-6" />
                 
                 <div className="space-y-4">
-                  {navItems.map(item => (
+                  {[...leftNavItems, ...rightNavItems].map(item => (
                     <motion.button
                       key={item.name}
                       whileHover={{ x: 8 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => scrollToSection(item.href)}
-                      className="block w-full text-left py-4 px-6 rounded-2xl transition-all duration-300 text-white/80 hover:bg-white/10 hover:text-white"
+                      className={`block w-full text-left py-4 px-6 rounded-2xl transition-all duration-300 ${
+                        activeSection === item.href.slice(1)
+                          ? 'bg-cyan-400/20 text-cyan-400 font-semibold'
+                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-white/30" />
+                        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          activeSection === item.href.slice(1) ? 'bg-cyan-400' : 'bg-white/30'
+                        }`} />
                         {item.name}
                       </div>
                     </motion.button>
@@ -241,7 +266,7 @@ const Header = () => {
                   onClick={() => scrollToSection('#demo')}
                   className="w-full mt-6 bg-gradient-to-r from-cyan-500 to-teal-500 text-white py-4 rounded-2xl font-semibold shadow-lg"
                 >
-                  Early Access
+                  Try Demo
                 </motion.button>
               </div>
             </motion.div>
