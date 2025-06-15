@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -40,7 +41,7 @@ const Hero = () => {
 
   return (
     <>
-      <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+      <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 pb-20">
         {/* Floating Background Elements */}
         <div className="absolute inset-0 pointer-events-none">
           <motion.div
@@ -138,12 +139,12 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator - Fixed to bottom of viewport */}
+        {/* Scroll Indicator - Positioned at very bottom of section */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 0.8 }}
-          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-30"
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
         >
           <motion.div
             animate={{ y: [0, 8, 0] }}
@@ -215,3 +216,4 @@ const Hero = () => {
 };
 
 export default Hero;
+
