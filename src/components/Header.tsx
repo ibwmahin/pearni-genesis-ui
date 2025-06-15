@@ -12,6 +12,7 @@ const Header = () => {
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
     { name: 'pearNI', href: '/nasa-chat' },
+    { name: 'Dashboard', href: '/dashboard' }, // ADDED
     { name: 'Demo', href: '#demo' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Contact', href: '#contact' },
