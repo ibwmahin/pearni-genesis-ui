@@ -10,21 +10,27 @@ import ChatDemo from '../components/ChatDemo';
 import Blog from '../components/Blog';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
+import CustomCursor from '../components/CustomCursor';
+import ParallaxBackground from '../components/ParallaxBackground';
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <Hero />
-        <About />
-        <Features />
-        <FeatureShowcase />
-        <ChatDemo />
-        <Blog />
-        <Contact />
-      </main>
-      <Footer />
+    <div className="min-h-screen relative">
+      <CustomCursor />
+      <ParallaxBackground />
+      <div className="relative z-10">
+        <Header />
+        <main>
+          <Hero />
+          <About />
+          <Features />
+          <FeatureShowcase />
+          <ChatDemo />
+          <Blog />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 };

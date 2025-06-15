@@ -91,15 +91,18 @@
 @layer base {
   * {
     @apply border-border;
+    cursor: none; /* Hide default cursor */
   }
 
   body {
     @apply bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-foreground font-inter;
     min-height: 100vh;
+    cursor: none; /* Hide default cursor */
   }
 
   html {
     scroll-behavior: smooth;
+    cursor: none; /* Hide default cursor */
   }
 }
 
@@ -122,6 +125,14 @@
 
   .floating-blob {
     @apply absolute rounded-full opacity-30 animate-float;
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(34, 211, 238, 0.3);
   }
 }
 
