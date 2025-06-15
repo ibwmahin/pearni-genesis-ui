@@ -17,7 +17,7 @@ const Header = () => {
 
   const rightNavItems = [
     { name: 'Demo', href: '#demo' },
-    { name: 'Blog', href: '#blog' },
+    { name: 'NASA Chat', href: '/nasa-chat' },
     { name: 'Contact', href: '#contact' }
   ];
 
@@ -47,6 +47,10 @@ const Header = () => {
   }, []);
 
   const scrollToSection = (href: string) => {
+    if (href.startsWith('/')) {
+      window.location.href = href;
+      return;
+    }
     const element = document.querySelector(href);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -92,7 +96,7 @@ const Header = () => {
       opacity: 1,
       transition: {
         duration: 0.4,
-        ease: "easeOut"
+        ease: [0.25, 0.46, 0.45, 0.94]
       }
     }
   };
@@ -120,10 +124,13 @@ const Header = () => {
             {leftNavItems.map(item => (
               <motion.button
                 key={item.name}
-                variants={navLinkVariants}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
+                initial={{ opacity: 0.8 }}
+                whileHover={{
+                  opacity: 1,
+                  y: -2,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(item.href)}
                 className={`relative transition-colors duration-300 ${
                   activeSection === item.href.slice(1)
@@ -133,7 +140,11 @@ const Header = () => {
               >
                 {item.name}
                 <motion.div
-                  variants={underlineVariants}
+                  initial={{ scaleX: 0, originX: 0 }}
+                  whileHover={{
+                    scaleX: 1,
+                    transition: { duration: 0.3 }
+                  }}
                   className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full"
                 />
                 {activeSection === item.href.slice(1) && (
@@ -149,10 +160,12 @@ const Header = () => {
 
           {/* Center Notch / Brand */}
           <motion.button
-            variants={notchVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
+            initial={{ scale: 1 }}
+            whileHover={{
+              scale: 1.05,
+              transition: { duration: 0.2 }
+            }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => scrollToSection('#hero')}
             className="bg-white/20 backdrop-blur-lg rounded-full px-6 py-3 flex items-center gap-3 shadow-xl ring-1 ring-white/30 cursor-pointer border border-white/10"
           >
@@ -180,10 +193,13 @@ const Header = () => {
             {rightNavItems.map(item => (
               <motion.button
                 key={item.name}
-                variants={navLinkVariants}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
+                initial={{ opacity: 0.8 }}
+                whileHover={{
+                  opacity: 1,
+                  y: -2,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(item.href)}
                 className={`relative transition-colors duration-300 ${
                   activeSection === item.href.slice(1)
@@ -193,7 +209,11 @@ const Header = () => {
               >
                 {item.name}
                 <motion.div
-                  variants={underlineVariants}
+                  initial={{ scaleX: 0, originX: 0 }}
+                  whileHover={{
+                    scaleX: 1,
+                    transition: { duration: 0.3 }
+                  }}
                   className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full"
                 />
                 {activeSection === item.href.slice(1) && (

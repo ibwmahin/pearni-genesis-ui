@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -73,8 +72,8 @@ const ChatDemo = () => {
   const chatVariants = {
     hidden: { 
       scale: 0,
-      x: 100,
-      y: 100,
+      x: 50,
+      y: 50,
       transition: { type: "spring" as const, stiffness: 120, damping: 14 }
     },
     visible: { 
@@ -121,9 +120,20 @@ const ChatDemo = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
             Experience <span className="gradient-text">pearNI</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
             Interact with our advanced AGI system and discover how it can transform your research and innovation process.
           </p>
+          
+          {/* Call to Action for NASA Chat */}
+          <motion.a
+            href="/nasa-chat"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <i className='bx bx-rocket text-xl'></i>
+            <span>Explore NASA AI Assistant</span>
+          </motion.a>
         </motion.div>
 
         <div className="max-w-4xl mx-auto">
@@ -244,8 +254,7 @@ const ChatDemo = () => {
 
       {/* Floating Chat Button */}
       <motion.button
-        variants={buttonVariants}
-        animate={isOpen ? "open" : "closed"}
+        animate={isOpen ? { rotate: 45 } : { rotate: 0 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={toggleChat}
@@ -254,7 +263,7 @@ const ChatDemo = () => {
         <i className='bx bxs-pear text-2xl'></i>
       </motion.button>
 
-      {/* Floating Chat Widget */}
+      {/* Floating Chat Widget - Fixed positioning */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -262,7 +271,11 @@ const ChatDemo = () => {
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className="fixed bottom-24 right-6 w-80 h-96 glass-card z-30"
+            className="fixed bottom-24 right-6 w-80 h-96 glass-card z-30 max-w-[calc(100vw-3rem)] max-h-[calc(100vh-8rem)]"
+            style={{ 
+              transform: 'none',
+              right: 'max(1.5rem, calc((100vw - 20rem) / 2 + 20rem - 100vw + 1.5rem))'
+            }}
           >
             {/* Mini Chat Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/20">
