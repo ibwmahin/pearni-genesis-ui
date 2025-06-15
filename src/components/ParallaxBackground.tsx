@@ -1,13 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const ParallaxBackground = () => {
-  const [scrollY, setScrollY] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ 
         x: (e.clientX / window.innerWidth) * 100, 
@@ -15,11 +12,9 @@ const ParallaxBackground = () => {
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousemove', handleMouseMove);
     
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
@@ -36,7 +31,6 @@ const ParallaxBackground = () => {
             rgba(59, 130, 246, 0.06) 50%, 
             rgba(147, 51, 234, 0.04) 75%, 
             rgba(248, 250, 252, 0.02) 100%)`,
-          transform: `translateY(${scrollY * 0.1}px)`,
         }}
       />
       
@@ -47,7 +41,6 @@ const ParallaxBackground = () => {
           background: 'conic-gradient(from 0deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2), rgba(20, 184, 166, 0.2))',
           top: '10%',
           left: '10%',
-          transform: `translateY(${scrollY * 0.2}px) rotate(${scrollY * 0.1}deg)`,
           filter: 'blur(40px)',
         }}
       />
@@ -58,7 +51,6 @@ const ParallaxBackground = () => {
           background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(147, 51, 234, 0.15))',
           top: '60%',
           right: '10%',
-          transform: `translateY(${scrollY * -0.15}px) rotate(${scrollY * -0.05}deg)`,
           filter: 'blur(35px)',
         }}
       />
@@ -69,7 +61,6 @@ const ParallaxBackground = () => {
           background: 'radial-gradient(circle, rgba(34, 197, 94, 0.2), rgba(20, 184, 166, 0.2))',
           bottom: '20%',
           left: '30%',
-          transform: `translateY(${scrollY * 0.25}px) rotate(${scrollY * 0.15}deg)`,
           filter: 'blur(30px)',
         }}
       />
@@ -123,7 +114,6 @@ const ParallaxBackground = () => {
               : i % 3 === 1 
               ? 'rgba(34, 211, 238, 0.4)' // Cyan for AI
               : 'rgba(59, 130, 246, 0.4)', // Blue for tech
-            transform: `translateY(${scrollY * (0.1 + Math.random() * 0.3)}px)`,
           }}
           animate={{
             opacity: [0.2, 0.8, 0.2],
