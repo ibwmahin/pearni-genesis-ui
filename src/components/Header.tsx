@@ -89,13 +89,46 @@ const Header = () => {
     visible: { 
       y: 0,
       opacity: 1,
-      transition: { duration: 0.4, ease: 'easeOut' }
+      transition: { duration: 0.4 }
     }
   };
 
   const backdropVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
+  };
+
+  // Handle scroll effects
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+      
+      // Update active section based on scroll position
+      const sections = ['hero', 'about', 'features', 'demo', 'blog', 'contact'];
+      const currentSection = sections.find(section => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 100 && rect.bottom >= 100;
+        }
+        return false;
+      });
+      
+      if (currentSection) {
+        setActiveSection(currentSection);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToSection = (href: string) => {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMenuOpen(false);
   };
 
   return (
