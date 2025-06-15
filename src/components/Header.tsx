@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Home, Settings, Menu, Sun, ArrowUp, ChevronRight } from 'lucide-react';
 import SearchSpotlight from './SearchSpotlight';
 import { Link } from 'react-router-dom';
 import {
@@ -15,14 +14,13 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   
   const navItems = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'About', href: '#about', icon: Settings },
-    { name: 'Features', href: '#features', icon: Menu },
-    { name: 'Solar System', href: '/dashboard', icon: Sun },
-    { name: 'Mission Planner', href: '/mission-planner', icon: ArrowUp },
-    { name: 'Demo', href: '#demo', icon: ChevronRight },
-    { name: 'Pricing', href: '/pricing', icon: Settings },
-    { name: 'Contact', href: '#contact', icon: Settings },
+    { name: 'Home', href: '/', iconClass: 'bx-home' },
+    { name: 'About', href: '#about', iconClass: 'bx-contact-book' },
+    { name: 'Features', href: '#features', iconClass: 'bx-widget' },
+    { name: 'Solar System', href: '/dashboard', iconClass: 'bx-planet' },
+    { name: 'Mission Planner', href: '/mission-planner', iconClass: 'bx-list-ul' },
+    { name: 'Pricing', href: '/pricing', iconClass: 'bx-groceries' },
+    { name: 'Contact', href: '#contact', iconClass: 'bx-contact-book' },
   ];
 
   return (
@@ -43,7 +41,7 @@ const Header = () => {
                   onClick={() => setSearchOpen(true)}
                   className="flex items-center gap-2 text-gray-900 font-semibold pl-2 pr-4 hover:text-gray-700 transition-colors"
                 >
-                  <Search className="w-5 h-5 text-gray-700" />
+                  <i className='bx bx-search text-xl text-gray-700'></i>
                   <span className="text-base">search</span>
                 </button>
                 {/* Divider */}
@@ -59,16 +57,16 @@ const Header = () => {
                             {item.href.startsWith('/') ? (
                               <Link
                                 to={item.href}
-                                className="p-3 text-gray-800 hover:text-gray-950 transition-colors"
+                                className="p-3 text-gray-800 hover:text-gray-950 transition-colors flex items-center justify-center w-11 h-11"
                               >
-                                <item.icon className="w-5 h-5" aria-label={item.name} />
+                                <i className={`bx ${item.iconClass} text-2xl`} aria-label={item.name}></i>
                               </Link>
                             ) : (
                               <a
                                 href={item.href}
-                                className="p-3 text-gray-800 hover:text-gray-950 transition-colors"
+                                className="p-3 text-gray-800 hover:text-gray-950 transition-colors flex items-center justify-center w-11 h-11"
                               >
-                                <item.icon className="w-5 h-5" aria-label={item.name} />
+                                <i className={`bx ${item.iconClass} text-2xl`} aria-label={item.name}></i>
                               </a>
                             )}
                           </TooltipTrigger>
