@@ -3,11 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+/* Enhanced design system with liquid Apple-style aesthetics */
 
 @layer base {
   :root {
-    /* Glass morphism color scheme */
+    /* Enhanced glass morphism color scheme */
     --background: 240 10% 97%;
     --foreground: 240 10% 10%;
 
@@ -36,7 +36,7 @@
     --input: 240 6% 90%;
     --ring: 195 100% 50%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -95,9 +95,15 @@
   }
 
   body {
-    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-foreground font-inter;
+    @apply text-foreground font-inter;
     min-height: 100vh;
     cursor: none; /* Hide default cursor */
+    background: linear-gradient(135deg, 
+      rgba(248, 250, 252, 1) 0%, 
+      rgba(241, 245, 249, 1) 25%, 
+      rgba(226, 232, 240, 1) 50%, 
+      rgba(203, 213, 225, 1) 75%, 
+      rgba(148, 163, 184, 0.1) 100%);
   }
 
   html {
@@ -108,23 +114,71 @@
 
 @layer components {
   .glass {
-    @apply bg-white/20 backdrop-blur-md border border-white/30 shadow-lg;
+    @apply backdrop-blur-2xl border shadow-2xl;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.25) 0%, 
+      rgba(255, 255, 255, 0.15) 50%, 
+      rgba(255, 255, 255, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.1);
   }
 
   .glass-card {
-    @apply glass rounded-2xl p-6;
+    @apply glass rounded-3xl p-8;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      0 20px 60px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.2);
   }
 
   .glass-button {
-    @apply glass rounded-full px-6 py-3 hover:bg-white/30 transition-all duration-300;
+    @apply glass rounded-full px-8 py-4 transition-all duration-300;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.2) 0%, 
+      rgba(255, 255, 255, 0.1) 100%);
+  }
+
+  .glass-button:hover {
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.3) 0%, 
+      rgba(255, 255, 255, 0.2) 100%);
+    transform: translateY(-2px);
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-teal-500 to-cyan-500 bg-clip-text text-transparent;
+    @apply bg-clip-text text-transparent;
+    background: linear-gradient(135deg, 
+      #14b8a6 0%, 
+      #06b6d4 25%, 
+      #3b82f6 50%, 
+      #8b5cf6 75%, 
+      #14b8a6 100%);
+    background-size: 300% 300%;
+    animation: gradientShift 6s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 
   .floating-blob {
-    @apply absolute rounded-full opacity-30 animate-float;
+    @apply absolute rounded-full opacity-20;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-20px) rotate(5deg); }
+    66% { transform: translateY(10px) rotate(-3deg); }
   }
 
   .text-shadow {
@@ -132,24 +186,82 @@
   }
 
   .text-shadow-lg {
-    text-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(34, 211, 238, 0.3);
+    text-shadow: 
+      0 4px 8px rgba(0,0,0,0.5), 
+      0 0 20px rgba(34, 211, 238, 0.3),
+      0 0 40px rgba(34, 211, 238, 0.1);
+  }
+
+  /* Enhanced liquid button effect */
+  .liquid-button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .liquid-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .liquid-button:hover::before {
+    left: 100%;
+  }
+
+  /* AI-themed pulse animation */
+  .ai-pulse {
+    animation: aiPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes aiPulse {
+    0%, 100% { 
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+      transform: scale(1);
+    }
+    50% { 
+      box-shadow: 0 0 40px rgba(34, 211, 238, 0.6);
+      transform: scale(1.02);
+    }
+  }
+
+  /* Sustainable theme green accents */
+  .eco-accent {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
   }
 }
 
-/* Custom scrollbar */
+/* Enhanced custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.6), rgba(20, 184, 166, 0.6));
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.8), rgba(20, 184, 166, 0.8));
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+}
+
+/* Apple-style smooth transitions */
+* {
+  transition-property: transform, opacity, background, border, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }

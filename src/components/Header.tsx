@@ -1,21 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const location = useLocation();
 
-  const leftNavItems = [
+  const navItems = [
     { name: 'Home', href: '#hero' },
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
-  ];
-
-  const rightNavItems = [
     { name: 'Demo', href: '#demo' },
     { name: 'Blog', href: '#blog' },
     { name: 'Contact', href: '#contact' },
@@ -54,229 +49,185 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  const navLinkVariants = {
-    initial: { opacity: 0.8 },
-    hover: { 
-      opacity: 1,
-      y: -2,
-      transition: { duration: 0.2 }
+  const liquidNavVariants = {
+    initial: { 
+      backdropFilter: 'blur(0px)',
+      background: 'rgba(255, 255, 255, 0)',
+      borderRadius: '0px',
     },
-    tap: { scale: 0.95 }
-  };
-
-  const underlineVariants = {
-    initial: { scaleX: 0, originX: 0 },
-    hover: { 
-      scaleX: 1,
-      transition: { duration: 0.3 }
+    scrolled: { 
+      backdropFilter: 'blur(20px)',
+      background: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: '24px',
+      transition: { 
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        duration: 0.6
+      }
     }
   };
 
-  const notchVariants = {
-    initial: { scale: 1 },
+  const navItemVariants = {
+    initial: { 
+      scale: 1,
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+      color: 'rgba(255, 255, 255, 0.8)'
+    },
     hover: { 
       scale: 1.05,
-      transition: { duration: 0.2 }
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      color: 'rgba(255, 255, 255, 1)',
+      borderRadius: '16px',
+      transition: { 
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        duration: 0.3
+      }
     },
-    tap: { scale: 0.98 }
-  };
-
-  const mobileMenuVariants = {
-    hidden: { 
-      y: '100%',
-      opacity: 0,
-      transition: { duration: 0.3 }
+    active: {
+      backgroundColor: 'rgba(34, 211, 238, 0.3)',
+      color: 'rgba(34, 211, 238, 1)',
+      borderRadius: '16px',
+      scale: 1.02,
     },
-    visible: { 
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.4 }
+    tap: { 
+      scale: 0.95,
+      transition: { duration: 0.1 }
     }
   };
 
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
+  const logoVariants = {
+    initial: { rotate: 0, scale: 1 },
+    hover: { 
+      rotate: 10,
+      scale: 1.1,
+      transition: { 
+        type: "spring",
+        stiffness: 400,
+        damping: 20
+      }
+    },
+    tap: { scale: 0.9 }
   };
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ 
-          y: 0, 
-          opacity: 1,
-          height: isScrolled ? '72px' : '80px'
-        }}
-        transition={{ duration: 0.6 }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-black/60 border-b border-white/30 shadow-2xl"
-      >
-        <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6 h-full">
-          {/* Left Navigation Items - Desktop */}
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            {leftNavItems.map((item) => (
-              <motion.button
-                key={item.name}
-                variants={navLinkVariants}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
-                onClick={() => scrollToSection(item.href)}
-                className={`relative transition-colors duration-300 ${
-                  activeSection === item.href.slice(1) 
-                    ? 'text-cyan-300 font-bold text-shadow-lg' 
-                    : 'text-white/90 hover:text-cyan-200'
-                }`}
-              >
-                {item.name}
+    <motion.nav
+      variants={liquidNavVariants}
+      initial="initial"
+      animate={isScrolled ? "scrolled" : "initial"}
+      className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 border border-white/20 shadow-2xl"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+      }}
+    >
+      <div className="flex items-center justify-center space-x-8">
+        {/* Logo */}
+        <motion.button
+          variants={logoVariants}
+          initial="initial"
+          whileHover="hover"
+          whileTap="tap"
+          onClick={() => scrollToSection('#hero')}
+          className="flex items-center space-x-2 px-3 py-2"
+        >
+          <motion.i 
+            className='bx bxs-pear text-cyan-400 text-2xl'
+            animate={{ 
+              filter: [
+                'drop-shadow(0 0 5px rgba(34, 211, 238, 0.5))',
+                'drop-shadow(0 0 15px rgba(34, 211, 238, 0.8))',
+                'drop-shadow(0 0 5px rgba(34, 211, 238, 0.5))'
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+          <span className="text-white font-bold tracking-wide hidden sm:block">
+            pearNI
+          </span>
+        </motion.button>
+
+        {/* Navigation Items - Desktop */}
+        <div className="hidden md:flex items-center space-x-1">
+          {navItems.map((item) => (
+            <motion.button
+              key={item.name}
+              variants={navItemVariants}
+              initial="initial"
+              whileHover="hover"
+              whileTap="tap"
+              animate={activeSection === item.href.slice(1) ? "active" : "initial"}
+              onClick={() => scrollToSection(item.href)}
+              className="relative px-4 py-2 text-sm font-medium transition-all duration-300"
+            >
+              {item.name}
+              {activeSection === item.href.slice(1) && (
                 <motion.div
-                  variants={underlineVariants}
-                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full"
+                  layoutId="liquidIndicator"
+                  className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full"
+                  style={{
+                    boxShadow: '0 0 10px rgba(34, 211, 238, 0.8)'
+                  }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30
+                  }}
                 />
-                {activeSection === item.href.slice(1) && (
-                  <motion.div
-                    layoutId="activeIndicator"
-                    className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/50"
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </motion.button>
-            ))}
-          </div>
-
-          {/* Center Notch / Brand */}
-          <motion.button
-            variants={notchVariants}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            onClick={() => scrollToSection('#hero')}
-            className="bg-white/30 backdrop-blur-lg rounded-full px-6 py-3 flex items-center gap-3 shadow-2xl ring-2 ring-white/40 cursor-pointer border border-white/20"
-          >
-            <motion.i 
-              className='bx bxs-pear text-cyan-400 text-2xl drop-shadow-lg'
-              animate={{ 
-                textShadow: [
-                  '0 0 10px rgba(34, 211, 238, 0.5)',
-                  '0 0 20px rgba(34, 211, 238, 0.8)',
-                  '0 0 10px rgba(34, 211, 238, 0.5)'
-                ]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <span className="text-white font-bold tracking-wide hidden sm:block text-shadow-lg">
-              pearNI
-            </span>
-          </motion.button>
-
-          {/* Right Navigation Items - Desktop */}
-          <div className="hidden md:flex gap-8 text-sm font-medium">
-            {rightNavItems.map((item) => (
-              <motion.button
-                key={item.name}
-                variants={navLinkVariants}
-                initial="initial"
-                whileHover="hover"
-                whileTap="tap"
-                onClick={() => scrollToSection(item.href)}
-                className={`relative transition-colors duration-300 ${
-                  activeSection === item.href.slice(1) 
-                    ? 'text-cyan-300 font-bold text-shadow-lg' 
-                    : 'text-white/90 hover:text-cyan-200'
-                }`}
-              >
-                {item.name}
-                <motion.div
-                  variants={underlineVariants}
-                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full"
-                />
-                {activeSection === item.href.slice(1) && (
-                  <motion.div
-                    layoutId="activeIndicatorRight"
-                    className="absolute bottom-[-8px] left-1/2 transform -translate-x-1/2 w-1 h-1 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/50"
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-              </motion.button>
-            ))}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden bg-white/30 backdrop-blur-lg rounded-full p-3 ring-2 ring-white/40 border border-white/20 shadow-xl"
-          >
-            <motion.i 
-              className={`bx ${isMenuOpen ? 'bx-x' : 'bx-menu'} text-xl text-white drop-shadow-lg`}
-              animate={{ rotate: isMenuOpen ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          </motion.button>
+              )}
+            </motion.button>
+          ))}
         </div>
-      </motion.nav>
 
-      {/* Mobile Menu Modal */}
+        {/* Mobile Menu Button */}
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 rounded-full bg-white/20 backdrop-blur-lg border border-white/30"
+        >
+          <motion.i 
+            className={`bx ${isMenuOpen ? 'bx-x' : 'bx-menu'} text-xl text-white`}
+            animate={{ rotate: isMenuOpen ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.button>
+      </div>
+
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
-          <>
-            <motion.div
-              variants={backdropVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
-              onClick={() => setIsMenuOpen(false)}
-            />
-            <motion.div
-              variants={mobileMenuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="fixed bottom-0 left-0 right-0 z-50 md:hidden"
-            >
-              <div className="bg-black/80 backdrop-blur-2xl rounded-t-3xl p-6 shadow-2xl ring-1 ring-white/30 border-t border-white/20">
-                <div className="w-12 h-1 bg-white/60 rounded-full mx-auto mb-6" />
-                
-                <div className="space-y-4">
-                  {[...leftNavItems, ...rightNavItems].map((item) => (
-                    <motion.button
-                      key={item.name}
-                      whileHover={{ x: 8 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => scrollToSection(item.href)}
-                      className={`block w-full text-left py-4 px-6 rounded-2xl transition-all duration-300 ${
-                        activeSection === item.href.slice(1)
-                          ? 'bg-cyan-400/20 text-cyan-300 font-bold shadow-lg'
-                          : 'text-white/90 hover:bg-white/10 hover:text-white'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          activeSection === item.href.slice(1) 
-                            ? 'bg-cyan-400 shadow-lg shadow-cyan-400/50' 
-                            : 'bg-white/40'
-                        }`} />
-                        {item.name}
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
-                
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 400,
+              damping: 30
+            }}
+            className="absolute top-full left-0 right-0 mt-2 p-4 rounded-2xl backdrop-blur-2xl bg-black/60 border border-white/20 md:hidden"
+          >
+            <div className="space-y-2">
+              {navItems.map((item, index) => (
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => scrollToSection('#demo')}
-                  className="w-full mt-6 bg-gradient-to-r from-cyan-500 to-teal-500 text-white py-4 rounded-2xl font-semibold shadow-2xl"
+                  key={item.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ x: 8, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => scrollToSection(item.href)}
+                  className="block w-full text-left py-3 px-4 rounded-xl text-white/90 hover:text-white transition-all duration-300"
                 >
-                  Try Demo
+                  {item.name}
                 </motion.button>
-              </div>
-            </motion.div>
-          </>
+              ))}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </motion.nav>
   );
 };
 
