@@ -189,11 +189,11 @@ const SolarSystem = () => {
 
   return (
     <div className="relative">
-      <Card className="bg-black/40 backdrop-blur-sm border border-purple-500/30 h-96">
+      <Card className="glass-card h-96 overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-purple-400">Interactive Solar System</CardTitle>
+          <CardTitle className="text-readable font-bold">Interactive Solar System</CardTitle>
         </CardHeader>
-        <CardContent className="h-80">
+        <CardContent className="h-full p-0 !pt-0 -mt-8">
           <Canvas camera={{ position: [0, 8, 20], fov: 60 }}>
             <ambientLight intensity={0.2} />
             <pointLight position={[0, 0, 0]} intensity={3} color="#FDB813" />
@@ -233,18 +233,18 @@ const SolarSystem = () => {
 
       {selectedPlanet && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/80 backdrop-blur-sm flex items-center justify-center z-10">
-          <Card className="bg-black/90 border border-purple-500/50 max-w-md mx-4">
+          <Card className="glass-card max-w-md mx-4">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-purple-400">{selectedPlanet.name}</CardTitle>
+              <CardTitle className="gradient-text">{selectedPlanet.name}</CardTitle>
               <button
                 onClick={() => setSelectedPlanet(null)}
-                className="text-gray-400 hover:text-white"
+                className="text-slate-500 hover:text-slate-900"
               >
                 <X className="w-5 h-5" />
               </button>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-300">{selectedPlanet.info}</p>
+              <p className="text-readable-muted">{selectedPlanet.info}</p>
             </CardContent>
           </Card>
         </div>
