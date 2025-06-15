@@ -58,33 +58,6 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  const navLinkVariants = {
-    initial: { opacity: 0.8 },
-    hover: {
-      opacity: 1,
-      y: -2,
-      transition: { duration: 0.2 }
-    },
-    tap: { scale: 0.95 }
-  };
-
-  const underlineVariants = {
-    initial: { scaleX: 0, originX: 0 },
-    hover: {
-      scaleX: 1,
-      transition: { duration: 0.3 }
-    }
-  };
-
-  const notchVariants = {
-    initial: { scale: 1 },
-    hover: {
-      scale: 1.05,
-      transition: { duration: 0.2 }
-    },
-    tap: { scale: 0.98 }
-  };
-
   const mobileMenuVariants = {
     hidden: {
       y: '100%',
@@ -96,7 +69,7 @@ const Header = () => {
       opacity: 1,
       transition: {
         duration: 0.4,
-        ease: [0.25, 0.46, 0.45, 0.94]
+        ease: "easeOut"
       }
     }
   };
@@ -140,12 +113,12 @@ const Header = () => {
               >
                 {item.name}
                 <motion.div
-                  initial={{ scaleX: 0, originX: 0 }}
+                  initial={{ scaleX: 0 }}
                   whileHover={{
                     scaleX: 1,
                     transition: { duration: 0.3 }
                   }}
-                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full"
+                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full origin-left"
                 />
                 {activeSection === item.href.slice(1) && (
                   <motion.div
@@ -209,12 +182,12 @@ const Header = () => {
               >
                 {item.name}
                 <motion.div
-                  initial={{ scaleX: 0, originX: 0 }}
+                  initial={{ scaleX: 0 }}
                   whileHover={{
                     scaleX: 1,
                     transition: { duration: 0.3 }
                   }}
-                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full"
+                  className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full origin-left"
                 />
                 {activeSection === item.href.slice(1) && (
                   <motion.div
