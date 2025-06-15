@@ -91,13 +91,11 @@
 @layer base {
   * {
     @apply border-border;
-    cursor: none; /* Hide default cursor */
   }
 
   body {
     @apply text-foreground font-inter;
     min-height: 100vh;
-    cursor: none; /* Hide default cursor */
     background: linear-gradient(135deg, 
       rgba(248, 250, 252, 1) 0%, 
       rgba(241, 245, 249, 1) 25%, 
@@ -108,7 +106,6 @@
 
   html {
     scroll-behavior: smooth;
-    cursor: none; /* Hide default cursor */
   }
 }
 
