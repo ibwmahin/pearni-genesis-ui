@@ -210,7 +210,9 @@ class APIService {
 
     try {
       if (queryType === 'nasa' || queryType === 'combined') {
+        console.log('Fetching NASA data for query:', query);
         nasaData = await this.callNasaAPI(query);
+        console.log('NASA data received:', nasaData);
       }
 
       const stream = this.callGeminiAPI(query, nasaData);
