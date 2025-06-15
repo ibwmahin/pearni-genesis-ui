@@ -41,10 +41,10 @@ const About = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-            About <span className="gradient-text">pearNI</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-readable mb-6">
+            About <span className="gradient-text font-bold">pearNI</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-readable-muted max-w-3xl mx-auto font-medium">
             Pioneering the future of artificial general intelligence with human-centered design and ethical innovation.
           </p>
         </motion.div>
@@ -58,11 +58,11 @@ const About = () => {
             viewport={{ once: true }}
             className="glass-card"
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">Our Mission</h3>
-            <p className="text-gray-600 text-lg leading-relaxed mb-6">
+            <h3 className="text-2xl font-bold text-readable mb-6">Our Mission</h3>
+            <p className="text-readable-light text-lg leading-relaxed mb-6 font-medium">
               pearNI represents the culmination of artificial general intelligence research, designed to amplify human potential while maintaining ethical guardrails and collaborative principles.
             </p>
-            <p className="text-gray-600 text-lg leading-relaxed">
+            <p className="text-readable-light text-lg leading-relaxed font-medium">
               We believe AGI should serve as humanity's partner in creating a better future, not as a replacement for human creativity and wisdom.
             </p>
             
@@ -71,8 +71,8 @@ const About = () => {
                 <i className='bx bx-target-lock text-xl gradient-text'></i>
               </div>
               <div>
-                <p className="font-semibold text-gray-800">Next-Gen AGI Platform</p>
-                <p className="text-gray-600 text-sm">Empowering tomorrow's breakthroughs today</p>
+                <p className="font-bold text-readable">Next-Gen AGI Platform</p>
+                <p className="text-readable-muted text-sm font-medium">Empowering tomorrow's breakthroughs today</p>
               </div>
             </div>
           </motion.div>
@@ -85,7 +85,7 @@ const About = () => {
             viewport={{ once: true }}
             className="glass-card"
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-8">Five Core Pillars</h3>
+            <h3 className="text-2xl font-bold text-readable mb-8">Five Core Pillars</h3>
             <div className="space-y-4">
               {pillars.map((pillar, index) => (
                 <motion.div
@@ -101,8 +101,8 @@ const About = () => {
                     <i className={`bx ${pillar.icon} text-white text-xl`}></i>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">{pillar.title}</h4>
-                    <p className="text-gray-600 text-sm">{pillar.description}</p>
+                    <h4 className="font-bold text-readable">{pillar.title}</h4>
+                    <p className="text-readable-muted text-sm font-medium">{pillar.description}</p>
                   </div>
                 </motion.div>
               ))}

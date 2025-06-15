@@ -83,10 +83,10 @@ const Features = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-            Core <span className="gradient-text">Features</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-readable mb-6">
+            Core <span className="gradient-text font-bold">Features</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-readable-muted max-w-3xl mx-auto font-medium">
             Discover how pearNI transforms industries and accelerates human progress through advanced AGI capabilities.
           </p>
         </motion.div>
@@ -105,10 +105,10 @@ const Features = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setActiveTab(index)}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+              className={`flex items-center space-x-2 px-6 py-3 rounded-full font-bold transition-all duration-300 ${
                 activeTab === index
                   ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg'
-                  : 'glass text-gray-700 hover:bg-white/30'
+                  : 'glass text-readable hover:bg-white/30'
               }`}
             >
               <i className={`bx ${feature.icon} text-lg`}></i>
@@ -133,10 +133,10 @@ const Features = () => {
                   <div className={`w-16 h-16 bg-gradient-to-r ${features[activeTab].color} rounded-2xl flex items-center justify-center`}>
                     <i className={`bx ${features[activeTab].icon} text-white text-2xl`}></i>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-800">{features[activeTab].title}</h3>
+                  <h3 className="text-3xl font-bold text-readable">{features[activeTab].title}</h3>
                 </div>
                 
-                <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                <p className="text-lg text-readable-light mb-8 leading-relaxed font-medium">
                   {features[activeTab].description}
                 </p>
 
@@ -150,7 +150,7 @@ const Features = () => {
                       className="flex items-center space-x-3"
                     >
                       <div className="w-2 h-2 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"></div>
-                      <span className="text-gray-700">{detail}</span>
+                      <span className="text-readable-muted font-medium">{detail}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -166,10 +166,10 @@ const Features = () => {
                   <div className={`w-32 h-32 mx-auto bg-gradient-to-r ${features[activeTab].color} rounded-3xl flex items-center justify-center mb-6`}>
                     <i className={`bx ${features[activeTab].icon} text-white text-6xl`}></i>
                   </div>
-                  <h4 className="text-xl font-semibold text-gray-800 mb-4">
+                  <h4 className="text-xl font-bold text-readable mb-4">
                     {features[activeTab].title} Engine
                   </h4>
-                  <p className="text-gray-600">
+                  <p className="text-readable-muted font-medium">
                     Advanced AI algorithms working seamlessly to deliver unprecedented capabilities in {features[activeTab].title.toLowerCase()}.
                   </p>
                 </motion.div>

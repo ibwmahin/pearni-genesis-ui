@@ -147,7 +147,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-6xl md:text-8xl font-bold mb-6 text-gray-800 leading-tight"
+              className="text-6xl md:text-8xl font-bold mb-6 text-readable leading-tight"
             >
               pearNI
             </motion.h1>
@@ -157,8 +157,8 @@ const Hero = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.8 }}
             >
-              <h2 className="text-3xl md:text-4xl font-light mb-8 text-gray-700">
-                AI-Powered <span className="gradient-text font-semibold">Sustainable</span> Innovation
+              <h2 className="text-3xl md:text-4xl font-light mb-8 text-readable-light">
+                AI-Powered <span className="gradient-text font-bold">Sustainable</span> Innovation
               </h2>
             </motion.div>
 
@@ -166,7 +166,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.8 }}
-              className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl md:text-2xl text-readable-muted mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
             >
               Revolutionizing the future with AI-driven sustainable practices, interactive 3D experiences, and cutting-edge environmental solutions for a greener tomorrow.
             </motion.p>
@@ -225,8 +225,8 @@ const Hero = () => {
                   className="glass p-6 rounded-2xl"
                 >
                   <i className={`bx ${feature.icon} text-3xl gradient-text mb-3 block`}></i>
-                  <h3 className="font-semibold text-gray-800 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600 text-sm">{feature.desc}</p>
+                  <h3 className="font-bold text-readable mb-2">{feature.title}</h3>
+                  <p className="text-readable-muted text-sm font-medium">{feature.desc}</p>
                 </motion.div>
               ))}
             </motion.div>

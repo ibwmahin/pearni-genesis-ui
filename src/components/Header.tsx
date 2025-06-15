@@ -47,7 +47,7 @@ const Header = () => {
                     <React.Fragment key={item.name}>
                       <a
                         href={item.href}
-                        className="px-3 py-2 text-sm text-gray-700 hover:text-gray-950 transition-colors"
+                        className="px-3 py-2 text-sm text-gray-800 font-medium hover:text-gray-950 transition-colors"
                       >
                         {item.name}
                       </a>
