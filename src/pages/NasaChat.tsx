@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp, Send, User, Bot, Settings, Zap } from 'lucide-react';
@@ -42,6 +41,59 @@ const NasaChat = () => {
       example: 'Write a poem about black holes in the style of Carl Sagan while explaining their scientific properties'
     }
   ];
+
+  const getRecommendations = (messageText: string, nasaData?: any) => {
+    const lowerText = messageText.toLowerCase();
+    
+    if (nasaData?.url && nasaData?.title) {
+      // APOD recommendations
+      return [
+        "Tell me more about this astronomical object",
+        "What telescope captured this image?",
+        "Show me similar space phenomena"
+      ];
+    }
+    
+    if (nasaData?.photos) {
+      // Mars rover recommendations
+      return [
+        "What instruments does this rover have?",
+        "Show me more recent Mars discoveries",
+        "Compare Mars geology to Earth"
+      ];
+    }
+    
+    if (lowerText.includes('mars')) {
+      return [
+        "What's the weather like on Mars today?",
+        "Show me Mars rover photos",
+        "How long would it take to get to Mars?"
+      ];
+    }
+    
+    if (lowerText.includes('space') || lowerText.includes('telescope')) {
+      return [
+        "Show me today's astronomy picture",
+        "What are the latest space discoveries?",
+        "Explain black holes simply"
+      ];
+    }
+    
+    if (lowerText.includes('asteroid') || lowerText.includes('comet')) {
+      return [
+        "Are there any asteroids approaching Earth?",
+        "What's the difference between asteroids and comets?",
+        "How do we track near-Earth objects?"
+      ];
+    }
+    
+    // General recommendations
+    return [
+      "Show me today's astronomy picture",
+      "What's happening on Mars right now?",
+      "Explain a space concept simply"
+    ];
+  };
 
   useEffect(() => {
     setHasAPIKeys(apiService.hasAPIKeys());
@@ -123,6 +175,15 @@ const NasaChat = () => {
     setIsLoading(false);
     setStreamingMessageId(null);
     setInputValue('');
+  };
+
+  const handleRecommendationClick = (recommendation: string) => {
+    setInputValue(recommendation);
+    // Auto-focus the input
+    const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+    if (input) {
+      input.focus();
+    }
   };
 
   const handleExampleClick = (example: string) => {
@@ -287,7 +348,7 @@ const NasaChat = () => {
           // Chat Messages
           <div className="space-y-6 mb-6 mt-8">
             <AnimatePresence>
-              {messages.map((message) => (
+              {messages.map((message, index) => (
                 <motion.div
                   key={message.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -318,6 +379,29 @@ const NasaChat = () => {
                       
                       {renderNASAData(message.nasaData)}
                     </div>
+                    
+                    {/* Recommendations for AI messages */}
+                    {message.sender === 'ai' && !message.isStreaming && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="mt-3 ml-4"
+                      >
+                        <div className="flex flex-wrap gap-2">
+                          {getRecommendations(message.text, message.nasaData).map((recommendation, recIndex) => (
+                            <button
+                              key={recIndex}
+                              onClick={() => handleRecommendationClick(recommendation)}
+                              className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full border border-blue-200 transition-colors hover:border-blue-300"
+                            >
+                              {recommendation}
+                            </button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                    
                     <p className="text-xs text-gray-500 mt-2 ml-4">
                       {message.timestamp.toLocaleTimeString()}
                     </p>
