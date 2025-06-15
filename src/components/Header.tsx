@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import SearchSpotlight from './SearchSpotlight';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -11,7 +12,7 @@ const Header = () => {
     { name: 'Home', href: '/' },
     { name: 'About', href: '#about' },
     { name: 'Features', href: '#features' },
-    { name: 'Solar System', href: '/dashboard' }, // <-- Added "Solar System"
+    { name: 'Solar System', href: '/dashboard' },
     { name: 'Mission Planner', href: '/mission-planner' },
     { name: 'Demo', href: '#demo' },
     { name: 'Pricing', href: '/pricing' },
@@ -46,12 +47,21 @@ const Header = () => {
                 <nav className="hidden md:flex items-center">
                   {navItems.map((item, index) => (
                     <React.Fragment key={item.name}>
-                      <a
-                        href={item.href}
-                        className="px-3 py-2 text-sm text-gray-800 font-medium hover:text-gray-950 transition-colors"
-                      >
-                        {item.name}
-                      </a>
+                      {item.href.startsWith('/') ? (
+                        <Link
+                          to={item.href}
+                          className="px-3 py-2 text-sm text-gray-800 font-medium hover:text-gray-950 transition-colors"
+                        >
+                          {item.name}
+                        </Link>
+                      ) : (
+                        <a
+                          href={item.href}
+                          className="px-3 py-2 text-sm text-gray-800 font-medium hover:text-gray-950 transition-colors"
+                        >
+                          {item.name}
+                        </a>
+                      )}
                       {index < navItems.length - 1 && <div className="w-px h-4 bg-black/10" />}
                     </React.Fragment>
                   ))}
@@ -59,9 +69,9 @@ const Header = () => {
               </div>
 
               {/* Early Access Button - Now leads to NASA Chat */}
-              <a href="/nasa-chat" className="ml-2 bg-gray-900 text-white text-sm px-4 py-2.5 rounded-full hover:bg-black transition-colors font-medium whitespace-nowrap">
+              <Link to="/nasa-chat" className="ml-2 bg-gray-900 text-white text-sm px-4 py-2.5 rounded-full hover:bg-black transition-colors font-medium whitespace-nowrap">
                 Early Access
-              </a>
+              </Link>
             </div>
           </div>
         </div>
