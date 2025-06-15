@@ -151,7 +151,7 @@
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent font-semibold;
+    @apply bg-clip-text text-transparent;
     background: linear-gradient(135deg, 
       #14b8a6 0%, 
       #06b6d4 25%, 
@@ -160,7 +160,6 @@
       #14b8a6 100%);
     background-size: 300% 300%;
     animation: gradientShift 6s ease infinite;
-    font-weight: 600;
   }
 
   @keyframes gradientShift {
