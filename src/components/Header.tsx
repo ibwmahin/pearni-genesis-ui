@@ -14,13 +14,13 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   
   const navItems = [
-    { name: 'Home', href: '/', iconClass: 'bx-home' },
-    { name: 'About', href: '#about', iconClass: 'bx-contact-book' },
-    { name: 'Features', href: '#features', iconClass: 'bx-widget' },
+    { name: 'Home', href: '/', iconClass: 'bx-home-alt' },
+    { name: 'About', href: '#about', iconClass: 'bx-info-circle' },
+    { name: 'Features', href: '#features', iconClass: 'bx-category' },
     { name: 'Solar System', href: '/dashboard', iconClass: 'bx-planet' },
-    { name: 'Mission Planner', href: '/mission-planner', iconClass: 'bx-list-ul' },
-    { name: 'Pricing', href: '/pricing', iconClass: 'bx-groceries' },
-    { name: 'Contact', href: '#contact', iconClass: 'bx-contact-book' },
+    { name: 'Mission Planner', href: '/mission-planner', iconClass: 'bx-rocket' },
+    { name: 'Pricing', href: '/pricing', iconClass: 'bx-dollar-circle' },
+    { name: 'Contact', href: '#contact', iconClass: 'bx-envelope' },
   ];
 
   return (
