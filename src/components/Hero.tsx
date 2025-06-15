@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -135,24 +136,24 @@ const Hero = () => {
               </motion.button>
             </motion.div>
           </motion.div>
-
-          {/* Scroll Indicator - Fixed positioning */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20"
-          >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="glass rounded-full p-3 cursor-pointer"
-              onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              <i className='bx bx-chevron-down text-xl text-gray-600'></i>
-            </motion.div>
-          </motion.div>
         </div>
+
+        {/* Scroll Indicator - Fixed to bottom of viewport */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
+          className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-30"
+        >
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="glass rounded-full p-3 cursor-pointer"
+            onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            <i className='bx bx-chevron-down text-xl text-gray-600'></i>
+          </motion.div>
+        </motion.div>
       </section>
 
       <AnimatePresence>
