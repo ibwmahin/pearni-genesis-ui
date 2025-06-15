@@ -118,16 +118,18 @@ class APIService {
         .map(msg => `${msg.role}: ${msg.content}`)
         .join('\n');
 
-      let fullPrompt = query;
+      let fullPrompt = systemPrompt + '\n\n';
       if (conversationContext) {
-        fullPrompt = `Previous conversation:\n${conversationContext}\n\nCurrent question: ${query}`;
+        fullPrompt += `Previous conversation:\n${conversationContext}\n\n`;
       }
+      
+      fullPrompt += `Current question: ${query}`;
 
       if (nasaData) {
         fullPrompt += `\n\nNASA Data: ${JSON.stringify(nasaData, null, 2)}`;
       }
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:streamGenerateContent?key=${this.apiKeys.gemini}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKeys.gemini}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,37 +164,35 @@ class APIService {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Gemini API Error Response:', errorText);
         throw new Error(`Gemini API error: ${response.status}`);
       }
 
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('Failed to get response reader');
-      }
+      const data = await response.json();
+      console.log('Gemini API Response:', data);
 
-      let buffer = '';
-      
-      while (true) {
-        const { done, value } = await reader.read();
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        const text = data.candidates[0].content.parts[0].text;
+        // Simulate streaming by yielding the text in chunks
+        const words = text.split(' ');
+        let currentChunk = '';
         
-        if (done) break;
-        
-        buffer += new TextDecoder().decode(value);
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-        
-        for (const line of lines) {
-          if (line.trim() && line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                yield data.candidates[0].content.parts[0].text;
-              }
-            } catch (e) {
-              // Skip malformed JSON
-            }
+        for (const word of words) {
+          currentChunk += word + ' ';
+          if (currentChunk.length > 50) {
+            yield currentChunk;
+            currentChunk = '';
+            // Small delay to simulate streaming
+            await new Promise(resolve => setTimeout(resolve, 50));
           }
         }
+        
+        if (currentChunk.trim()) {
+          yield currentChunk;
+        }
+      } else {
+        throw new Error('Unexpected response format from Gemini API');
       }
     } catch (error) {
       console.error('Gemini API Error:', error);
