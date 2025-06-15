@@ -70,69 +70,69 @@ const MissionPlanner = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white">
+    <div className="min-h-screen">
       <Header />
       
       <div className="pt-32 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold mb-4 gradient-text">
               AI Mission Planner
             </h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-readable-light max-w-3xl mx-auto">
               Design and optimize space missions with AI-powered recommendations, realistic constraints, and collaborative planning.
             </p>
           </div>
 
           {!isBuilding ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <Card className="bg-black/40 backdrop-blur-sm border border-red-500/30 hover:border-red-400 transition-all duration-300 cursor-pointer group"
-                    onClick={() => startNewMission('mars-exploration')}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-red-400 group-hover:text-red-300">
-                    <Target className="w-5 h-5" />
-                    Mars Exploration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 mb-4">Plan a comprehensive Mars exploration mission with rovers, habitats, and crew rotation.</p>
-                  <div className="text-sm text-gray-400">
-                    Duration: 18-26 months • Crew: 4-6 • Budget: $10-50B
+              <div 
+                className="glass-card cursor-pointer group hover:scale-105 transition-all duration-300"
+                onClick={() => startNewMission('mars-exploration')}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-red-100 rounded-full">
+                    <Target className="w-6 h-6 text-red-600" />
                   </div>
-                </CardContent>
-              </Card>
+                  <h3 className="text-xl font-bold text-readable">Mars Exploration</h3>
+                </div>
+                <p className="text-readable-muted mb-4">Plan a comprehensive Mars exploration mission with rovers, habitats, and crew rotation.</p>
+                <div className="text-sm text-readable-light">
+                  Duration: 18-26 months • Crew: 4-6 • Budget: $10-50B
+                </div>
+              </div>
 
-              <Card className="bg-black/40 backdrop-blur-sm border border-gray-500/30 hover:border-gray-400 transition-all duration-300 cursor-pointer group"
-                    onClick={() => startNewMission('asteroid-mining')}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-gray-400 group-hover:text-gray-300">
-                    <Cpu className="w-5 h-5" />
-                    Asteroid Mining
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 mb-4">Design autonomous mining operations for near-Earth asteroids with resource extraction.</p>
-                  <div className="text-sm text-gray-400">
-                    Duration: 3-7 years • Crew: 0-2 • Budget: $5-20B
+              <div 
+                className="glass-card cursor-pointer group hover:scale-105 transition-all duration-300"
+                onClick={() => startNewMission('asteroid-mining')}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-gray-100 rounded-full">
+                    <Cpu className="w-6 h-6 text-gray-600" />
                   </div>
-                </CardContent>
-              </Card>
+                  <h3 className="text-xl font-bold text-readable">Asteroid Mining</h3>
+                </div>
+                <p className="text-readable-muted mb-4">Design autonomous mining operations for near-Earth asteroids with resource extraction.</p>
+                <div className="text-sm text-readable-light">
+                  Duration: 3-7 years • Crew: 0-2 • Budget: $5-20B
+                </div>
+              </div>
 
-              <Card className="bg-black/40 backdrop-blur-sm border border-blue-500/30 hover:border-blue-400 transition-all duration-300 cursor-pointer group"
-                    onClick={() => startNewMission('space-station')}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-blue-400 group-hover:text-blue-300">
-                    <Rocket className="w-5 h-5" />
-                    Space Station
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 mb-4">Build and deploy advanced space stations for research, manufacturing, or tourism.</p>
-                  <div className="text-sm text-gray-400">
-                    Duration: 5-10 years • Crew: 6-12 • Budget: $15-100B
+              <div 
+                className="glass-card cursor-pointer group hover:scale-105 transition-all duration-300"
+                onClick={() => startNewMission('space-station')}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 bg-blue-100 rounded-full">
+                    <Rocket className="w-6 h-6 text-blue-600" />
                   </div>
-                </CardContent>
-              </Card>
+                  <h3 className="text-xl font-bold text-readable">Space Station</h3>
+                </div>
+                <p className="text-readable-muted mb-4">Build and deploy advanced space stations for research, manufacturing, or tourism.</p>
+                <div className="text-sm text-readable-light">
+                  Duration: 5-10 years • Crew: 6-12 • Budget: $15-100B
+                </div>
+              </div>
             </div>
           ) : (
             <div className="grid lg:grid-cols-3 gap-8">

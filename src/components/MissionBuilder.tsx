@@ -33,30 +33,30 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-black/40 border-purple-500/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-400">
-            <Target className="w-5 h-5" />
-            Mission Overview
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="glass-card">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-purple-100 rounded-full">
+            <Target className="w-5 h-5 text-purple-600" />
+          </div>
+          <h2 className="text-xl font-bold text-readable">Mission Overview</h2>
+        </div>
+        <div className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Mission Name</label>
+              <label className="block text-sm font-medium text-readable mb-2">Mission Name</label>
               <input
                 type="text"
                 value={mission.name}
                 onChange={(e) => updateMission({ name: e.target.value })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Mission Type</label>
+              <label className="block text-sm font-medium text-readable mb-2">Mission Type</label>
               <select
                 value={mission.type}
                 onChange={(e) => updateMission({ type: e.target.value as Mission['type'] })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="mars-exploration">Mars Exploration</option>
                 <option value="asteroid-mining">Asteroid Mining</option>
@@ -65,44 +65,44 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Duration (days)</label>
+              <label className="block text-sm font-medium text-readable mb-2">Duration (days)</label>
               <input
                 type="number"
                 value={mission.duration}
                 onChange={(e) => updateMission({ duration: parseInt(e.target.value) })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Crew Size</label>
+              <label className="block text-sm font-medium text-readable mb-2">Crew Size</label>
               <input
                 type="number"
                 value={mission.crewSize}
                 onChange={(e) => updateMission({ crewSize: parseInt(e.target.value) })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="bg-black/40 border-blue-500/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-400">
-            <Rocket className="w-5 h-5" />
-            Spacecraft Configuration
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="glass-card">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-blue-100 rounded-full">
+            <Rocket className="w-5 h-5 text-blue-600" />
+          </div>
+          <h2 className="text-xl font-bold text-readable">Spacecraft Configuration</h2>
+        </div>
+        <div className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Propulsion System</label>
+              <label className="block text-sm font-medium text-readable mb-2">Propulsion System</label>
               <select
                 value={mission.spacecraft.propulsion}
                 onChange={(e) => updateMission({ 
                   spacecraft: { ...mission.spacecraft, propulsion: e.target.value }
                 })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="chemical">Chemical Rockets</option>
                 <option value="ion">Ion Drive</option>
@@ -111,13 +111,13 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Habitat Module</label>
+              <label className="block text-sm font-medium text-readable mb-2">Habitat Module</label>
               <select
                 value={mission.spacecraft.habitat}
                 onChange={(e) => updateMission({ 
                   spacecraft: { ...mission.spacecraft, habitat: e.target.value }
                 })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="standard">Standard Module</option>
                 <option value="extended">Extended Duration</option>
@@ -126,13 +126,13 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Power System</label>
+              <label className="block text-sm font-medium text-readable mb-2">Power System</label>
               <select
                 value={mission.spacecraft.power}
                 onChange={(e) => updateMission({ 
                   spacecraft: { ...mission.spacecraft, power: e.target.value }
                 })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="solar">Solar Panels</option>
                 <option value="nuclear">Nuclear Reactor</option>
@@ -141,13 +141,13 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Communication</label>
+              <label className="block text-sm font-medium text-readable mb-2">Communication</label>
               <select
                 value={mission.spacecraft.communication}
                 onChange={(e) => updateMission({ 
                   spacecraft: { ...mission.spacecraft, communication: e.target.value }
                 })}
-                className="w-full bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="w-full bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="standard">Standard Radio</option>
                 <option value="deep-space">Deep Space Network</option>
@@ -156,24 +156,24 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
               </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="bg-black/40 border-green-500/30">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-400">
-            <Target className="w-5 h-5" />
-            Mission Objectives
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div className="glass-card">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-green-100 rounded-full">
+            <Target className="w-5 h-5 text-green-600" />
+          </div>
+          <h2 className="text-xl font-bold text-readable">Mission Objectives</h2>
+        </div>
+        <div className="space-y-4">
           {mission.objectives.map((objective, index) => (
             <div key={index} className="flex gap-2">
               <input
                 type="text"
                 value={objective}
                 onChange={(e) => updateObjective(index, e.target.value)}
-                className="flex-1 bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                className="flex-1 bg-white/80 border border-slate-200 rounded-lg px-3 py-2 text-readable focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter mission objective..."
               />
               <Button
@@ -188,8 +188,8 @@ const MissionBuilder = ({ mission, onUpdate }: MissionBuilderProps) => {
           <Button onClick={addObjective} variant="outline" className="w-full">
             Add Objective
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
