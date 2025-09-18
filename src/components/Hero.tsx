@@ -1,257 +1,299 @@
-
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Hero = () => {
   const [showDemo, setShowDemo] = useState(false);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const aboutRef = useRef<HTMLElement | null>(null);
 
-  const handleDemoClick = () => {
-    setShowDemo(true);
-  };
+  // Prevent background scroll when modal open
+  useEffect(() => {
+    document.body.style.overflow = showDemo ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showDemo]);
 
+  // Close modal on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setShowDemo(false);
+    };
+    if (showDemo) window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showDemo]);
+
+  // Scroll to demo target (keeps previous behavior)
   const scrollToDemo = () => {
-    const element = document.querySelector('#demo');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    const el = document.querySelector("#demo");
+    if (el) {
+      (el as HTMLElement).scrollIntoView({ behavior: "smooth" });
     }
     setShowDemo(false);
   };
 
+  // Respect prefers-reduced-motion (framer-motion will check this too)
+  const prefersReduced =
+    typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false;
+
+  // motion variants
   const demoModal = {
-    hidden: { opacity: 0, scale: 0.8, y: 50 },
-    visible: { 
-      opacity: 1, 
+    hidden: { opacity: 0, scale: 0.95, y: 20 },
+    visible: {
+      opacity: 1,
       scale: 1,
       y: 0,
-      transition: { 
-        type: "spring" as const,
+      transition: {
+        type: "spring",
         stiffness: 300,
-        damping: 25,
-        duration: 0.5
-      } 
-    }
+        damping: 30,
+        duration: 0.5,
+      },
+    },
   };
 
   const backdropVariants = {
     hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { duration: 0.3 }
-    }
+    visible: { opacity: 1, transition: { duration: 0.25 } },
   };
 
-  const buttonVariants = {
-    hover: { 
-      scale: 1.05, 
+  const buttonHover = {
+    hover: {
+      scale: 1.03,
       y: -2,
-      boxShadow: '0 10px 40px rgba(34, 211, 238, 0.3)',
-      transition: {
-        type: "spring" as const,
-        stiffness: 400,
-        damping: 20
-      }
+      boxShadow: "0 8px 30px rgba(34,211,238,0.18)",
     },
-    tap: { scale: 0.95 }
+    tap: { scale: 0.98 },
   };
 
-  const floatingVariants = {
+  const floating = {
     float: {
-      y: [-10, 10, -10],
-      rotate: [-2, 2, -2],
-      transition: {
-        duration: 6,
-        repeat: Infinity,
-        ease: "easeInOut" as const
-      }
-    }
+      y: [-8, 8, -8],
+      rotate: [-1.5, 1.5, -1.5],
+      transition: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+    },
   };
 
   return (
     <>
-      <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-32 pb-20">
-        {/* Enhanced Floating Background Elements with AI themes */}
+      <section
+        id="hero"
+        className="min-h-screen flex items-start md:items-center justify-center relative overflow-hidden pt-24 md:pt-32 pb-16"
+        aria-label="Hero section"
+      >
+        {/* Floating background elements (reduced motion controls) */}
         <div className="absolute inset-0 pointer-events-none">
+          {!prefersReduced && (
+            <>
+              <motion.div
+                variants={floating}
+                animate="float"
+                className="absolute w-56 h-56 rounded-full bg-gradient-to-r from-teal-400/20 to-cyan-400/20 top-16 left-6 blur-3xl"
+              />
+              <motion.div
+                variants={floating}
+                animate="float"
+                transition={{ delay: 2 }}
+                className="absolute w-44 h-44 rounded-full bg-gradient-to-r from-cyan-400/20 to-blue-400/20 top-36 right-12 blur-3xl"
+              />
+              <motion.div
+                variants={floating}
+                animate="float"
+                transition={{ delay: 4 }}
+                className="absolute w-32 h-32 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 bottom-36 left-1/4 blur-3xl"
+              />
+            </>
+          )}
+          {/* small rotating accents */}
           <motion.div
-            variants={floatingVariants}
-            animate="float"
-            className="absolute w-64 h-64 rounded-full bg-gradient-to-r from-teal-400/20 to-cyan-400/20 top-20 left-10 blur-3xl"
-          />
-          <motion.div
-            variants={floatingVariants}
-            animate="float"
-            transition={{ delay: 2 }}
-            className="absolute w-48 h-48 rounded-full bg-gradient-to-r from-cyan-400/20 to-blue-400/20 top-40 right-20 blur-3xl"
-          />
-          <motion.div
-            variants={floatingVariants}
-            animate="float"
-            transition={{ delay: 4 }}
-            className="absolute w-32 h-32 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 bottom-40 left-1/4 blur-3xl"
-          />
-          
-          {/* AI-themed floating elements */}
-          <motion.div
-            animate={{ 
-              rotate: 360,
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ 
-              rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-              scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-            }}
+            animate={
+              !prefersReduced ? { rotate: 360, scale: [1, 1.08, 1] } : {}
+            }
+            transition={
+              !prefersReduced
+                ? {
+                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 4, repeat: Infinity },
+                  }
+                : {}
+            }
             className="absolute top-1/4 right-1/4 w-8 h-8 border-2 border-cyan-400/30 rounded-full"
           />
           <motion.div
-            animate={{ 
-              rotate: -360,
-              opacity: [0.3, 0.8, 0.3]
-            }}
-            transition={{ 
-              rotate: { duration: 15, repeat: Infinity, ease: "linear" },
-              opacity: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-            }}
+            animate={
+              !prefersReduced ? { rotate: -360, opacity: [0.3, 0.8, 0.3] } : {}
+            }
+            transition={
+              !prefersReduced
+                ? {
+                    rotate: { duration: 15, repeat: Infinity, ease: "linear" },
+                    opacity: {
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    },
+                  }
+                : {}
+            }
             className="absolute bottom-1/3 right-1/3 w-6 h-6 bg-gradient-to-r from-teal-400/40 to-cyan-400/40 rounded-full"
           />
         </div>
 
-        <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="container mx-auto px-4 text-center relative z-10 max-w-6xl">
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="glass-card max-w-5xl mx-auto"
+            transition={{ duration: 0.7 }}
+            className="glass-card mx-auto px-6 py-10 sm:py-12 rounded-3xl"
+            role="region"
+            aria-labelledby="hero-heading"
           >
-            {/* Enhanced Logo */}
+            {/* Logo */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.6, type: "spring" }}
-              className="w-24 h-24 mx-auto mb-8 glass rounded-3xl flex items-center justify-center relative overflow-hidden"
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
+              className="w-20 h-20 mx-auto mb-6 sm:mb-8 bg-transparent rounded-2xl flex items-center justify-center relative overflow-hidden"
+              aria-hidden
             >
-              <motion.div
-                animate={{ 
-                  background: [
-                    'linear-gradient(45deg, #14b8a6, #06b6d4)',
-                    'linear-gradient(45deg, #06b6d4, #3b82f6)',
-                    'linear-gradient(45deg, #3b82f6, #14b8a6)'
-                  ]
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
+              <div
                 className="absolute inset-0 opacity-20"
+                style={{ background: "linear-gradient(45deg,#14b8a6,#06b6d4)" }}
               />
-              <i className='bx bxs-pear text-5xl gradient-text relative z-10'></i>
+              <i className="bx bxs-pear text-3xl sm:text-4xl gradient-text relative z-10" />
             </motion.div>
 
-            {/* Main Headline with AI focus */}
+            {/* Headline */}
             <motion.h1
-              initial={{ opacity: 0, y: 30 }}
+              id="hero-heading"
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-6xl md:text-8xl font-bold mb-6 text-readable leading-tight"
+              transition={{ delay: 0.35, duration: 0.6 }}
+              className="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-3 md:mb-4 leading-tight"
             >
               pearNI
             </motion.h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
+            <motion.h2
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.8 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="text-lg sm:text-2xl md:text-3xl font-light mb-6 text-readable-light max-w-3xl mx-auto"
             >
-              <h2 className="text-3xl md:text-4xl font-light mb-8 text-readable-light">
-                AI-Powered <span className="gradient-text font-bold">Sustainable</span> Innovation
-              </h2>
-            </motion.div>
+              AI-Powered{" "}
+              <span className="gradient-text font-semibold">Sustainable</span>{" "}
+              Innovation
+            </motion.h2>
 
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9, duration: 0.8 }}
-              className="text-xl md:text-2xl text-readable-muted mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
+              transition={{ delay: 0.65, duration: 0.6 }}
+              className="text-base sm:text-lg text-readable-muted mb-8 max-w-2xl mx-auto"
             >
-              Revolutionizing the future with AI-driven sustainable practices, interactive 3D experiences, and cutting-edge environmental solutions for a greener tomorrow.
+              Revolutionizing the future with AI-driven sustainable practices,
+              interactive 3D experiences, and cutting-edge environmental
+              solutions for a greener tomorrow.
             </motion.p>
 
-            {/* Enhanced CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.8 }}
-              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-            >
+            {/* CTAs: stacked on mobile, inline on md+ */}
+            <motion.div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-6">
               <motion.button
-                variants={buttonVariants}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 rounded-full text-lg font-semibold shadow-lg bg-gradient-to-r from-teal-500 to-cyan-500 text-white focus:outline-none focus:ring-4 focus:ring-cyan-200"
+                variants={buttonHover}
                 whileHover="hover"
                 whileTap="tap"
-                onClick={handleDemoClick}
-                className="relative bg-gradient-to-r from-teal-500 to-cyan-500 text-white px-10 py-5 rounded-full font-semibold text-xl shadow-2xl overflow-hidden group"
+                onClick={() => setShowDemo(true)}
+                aria-haspopup="dialog"
+                aria-expanded={showDemo}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-teal-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="relative flex items-center">
-                  <i className='bx bx-play mr-3 text-2xl'></i>
-                  Explore AI Demo
-                </div>
+                <i className="bx bx-play mr-3 text-xl" aria-hidden />
+                Explore AI Demo
               </motion.button>
 
               <motion.button
-                variants={buttonVariants}
+                className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 rounded-full text-lg font-semibold glass-button text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                variants={buttonHover}
                 whileHover="hover"
                 whileTap="tap"
-                onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
-                className="glass-button text-gray-700 font-semibold text-xl px-10 py-5"
+                onClick={() =>
+                  document
+                    .querySelector("#about")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
               >
-                <i className='bx bx-leaf mr-3 text-2xl text-green-500'></i>
+                <i
+                  className="bx bx-leaf mr-3 text-2xl text-green-500"
+                  aria-hidden
+                />
                 Sustainable Tech
               </motion.button>
             </motion.div>
 
-            {/* Feature highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3, duration: 0.8 }}
-              className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
-            >
+            {/* Feature cards (stack on small devices) */}
+            <motion.div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
-                { icon: 'bx-brain', title: 'AI-Powered', desc: 'Advanced machine learning' },
-                { icon: 'bx-leaf', title: 'Sustainable', desc: 'Eco-friendly solutions' },
-                { icon: 'bx-cube', title: '3D Interactive', desc: 'Immersive experiences' }
-              ].map((feature, index) => (
+                {
+                  icon: "bx-brain",
+                  title: "AI-Powered",
+                  desc: "Advanced machine learning",
+                },
+                {
+                  icon: "bx-leaf",
+                  title: "Sustainable",
+                  desc: "Eco-friendly solutions",
+                },
+                {
+                  icon: "bx-cube",
+                  title: "3D Interactive",
+                  desc: "Immersive experiences",
+                },
+              ].map((feature, idx) => (
                 <motion.div
                   key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.5 + index * 0.2 }}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  className="glass p-6 rounded-2xl"
+                  transition={{ delay: 0.8 + idx * 0.12 }}
+                  whileHover={!prefersReduced ? { scale: 1.03, y: -4 } : {}}
+                  className="glass p-4 rounded-2xl flex flex-col items-start text-left"
                 >
-                  <i className={`bx ${feature.icon} text-3xl gradient-text mb-3 block`}></i>
-                  <h3 className="font-bold text-readable mb-2">{feature.title}</h3>
-                  <p className="text-readable-muted text-sm font-medium">{feature.desc}</p>
+                  <i
+                    className={`bx ${feature.icon} text-2xl gradient-text mb-3`}
+                    aria-hidden
+                  />
+                  <h3 className="font-bold text-readable mb-1 text-lg">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-readable-muted">{feature.desc}</p>
                 </motion.div>
               ))}
             </motion.div>
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
-        >
+        {/* Scroll indicator - slightly smaller on mobile */}
+        <motion.div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-20">
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="glass rounded-full p-4 cursor-pointer"
-            onClick={() => document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' })}
+            animate={!prefersReduced ? { y: [0, 8, 0] } : {}}
+            transition={
+              !prefersReduced ? { duration: 2, repeat: Infinity } : {}
+            }
+            className="glass rounded-full p-3 cursor-pointer"
+            onClick={() =>
+              document
+                .querySelector("#about")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+            aria-hidden
           >
-            <i className='bx bx-chevron-down text-2xl text-gray-600'></i>
+            <i className="bx bx-chevron-down text-xl text-gray-600" />
           </motion.div>
         </motion.div>
       </section>
 
-      {/* Fixed Demo Modal - properly centered */}
+      {/* Demo Modal */}
       <AnimatePresence>
         {showDemo && (
           <>
@@ -262,50 +304,75 @@ const Hero = () => {
               exit="hidden"
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
               onClick={() => setShowDemo(false)}
+              aria-hidden
             />
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
               <motion.div
+                ref={modalRef}
                 variants={demoModal}
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-label="AI demo dialog"
                 className="w-full max-w-2xl"
+                onClick={(e) => e.stopPropagation()} // prevent backdrop click from closing when clicking modal content
               >
-                <div className="glass-card relative">
+                <div className="glass-card relative p-6 rounded-2xl">
                   <button
                     onClick={() => setShowDemo(false)}
-                    className="absolute top-4 right-4 w-10 h-10 glass rounded-full flex items-center justify-center text-gray-600 hover:text-gray-800 z-10"
+                    className="absolute top-4 right-4 w-9 h-9 glass rounded-full flex items-center justify-center text-gray-600 hover:text-gray-800"
+                    aria-label="Close demo"
                   >
-                    <i className='bx bx-x text-2xl'></i>
+                    <i className="bx bx-x text-lg" />
                   </button>
-                  
-                  <div className="text-center mb-8">
-                    <div className="w-16 h-16 mx-auto mb-4 glass rounded-2xl flex items-center justify-center">
-                      <i className='bx bxs-pear text-3xl gradient-text'></i>
+
+                  <div className="text-center mb-6">
+                    <div className="w-14 h-14 mx-auto mb-3 glass rounded-lg flex items-center justify-center">
+                      <i className="bx bxs-pear text-2xl gradient-text" />
                     </div>
-                    <h3 className="text-3xl font-bold text-gray-800 mb-4">AI-Powered Demo</h3>
-                    <p className="text-gray-600 text-lg">Experience the future of sustainable AI technology</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+                      AI-Powered Demo
+                    </h3>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      Experience the future of sustainable AI technology
+                    </p>
                   </div>
 
-                  <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl p-6 mb-8">
-                    <div className="flex items-center space-x-4 mb-4">
-                      <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center">
-                        <i className='bx bxs-pear text-white text-xl'></i>
+                  <div className="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-4 mb-6">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center">
+                        <i className="bx bxs-pear text-white text-lg" />
                       </div>
-                      <div>
-                        <span className="font-semibold text-gray-800 text-lg">pearNI Assistant</span>
-                        <div className="text-green-500 text-sm flex items-center">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                      <div className="text-left">
+                        <span className="font-semibold text-gray-800 text-sm sm:text-base">
+                          pearNI Assistant
+                        </span>
+                        <div className="text-green-500 text-xs sm:text-sm flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse" />
                           AI Active
                         </div>
                       </div>
                     </div>
-                    <p className="text-gray-700 mb-4 text-lg leading-relaxed">
-                      Hello! I'm pearNI, your AI-powered assistant for sustainable innovation. I can help you discover eco-friendly solutions, analyze environmental data, and create interactive 3D visualizations for a greener future.
+
+                    <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-3">
+                      Hello! I'm pearNI, your AI-powered assistant for
+                      sustainable innovation. I can help you discover
+                      eco-friendly solutions, analyze environmental data, and
+                      create interactive 3D visualizations for a greener future.
                     </p>
+
                     <div className="flex flex-wrap gap-2">
-                      {['🌱 Sustainability', '🤖 AI Analysis', '🌍 3D Visualization'].map((tag) => (
-                        <span key={tag} className="bg-white/60 px-3 py-1 rounded-full text-sm font-medium text-gray-700">
+                      {[
+                        "🌱 Sustainability",
+                        "🤖 AI Analysis",
+                        "🌍 3D Visualization",
+                      ].map((tag) => (
+                        <span
+                          key={tag}
+                          className="bg-white/70 px-3 py-1 rounded-full text-xs sm:text-sm font-medium text-gray-700"
+                        >
                           {tag}
                         </span>
                       ))}
@@ -313,12 +380,12 @@ const Hero = () => {
                   </div>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={!prefersReduced ? { scale: 1.02 } : {}}
                     whileTap={{ scale: 0.98 }}
                     onClick={scrollToDemo}
-                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-3 rounded-xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-200"
                   >
-                    <i className='bx bx-rocket mr-2'></i>
+                    <i className="bx bx-rocket mr-2" />
                     Launch Full AI Experience
                   </motion.button>
                 </div>
