@@ -1,23 +1,15 @@
+// ChatDemo.tsx (updated: mini popup rendered via portal + safe max-width)
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-/**
- * ChatDemo.tsx
- * Fully self-contained React + TypeScript component.
- * Focus: Fix the "mini popup" (mini assistant) UI so it is professional, readable, responsive,
- * and doesn't break layout on small screens. Uses Tailwind utility classes.
- *
- * Notes:
- * - This file assumes Tailwind + Boxicons + framer-motion + react-router-dom are available.
- * - Add the small CSS snippets below to your global stylesheet if you use the "glass-card" utility.
- */
-
+/* (types / sample questions / helpers same as you had) */
 type Message = {
   id: number;
   text: string;
   sender: "ai" | "user";
-  timestamp: string; // ISO string
+  timestamp: string;
 };
 
 const SAMPLE_QUESTIONS = [
@@ -38,7 +30,6 @@ export default function ChatDemo(): JSX.Element {
       timestamp: new Date().toISOString(),
     },
   ]);
-
   const [inputValue, setInputValue] = useState("");
   const [miniOpen, setMiniOpen] = useState(false);
 
@@ -48,22 +39,17 @@ export default function ChatDemo(): JSX.Element {
   const miniInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    // Auto-scroll to bottom when messages update
     const node = scrollRef.current;
-    if (node) {
-      node.scrollTo({ top: node.scrollHeight, behavior: "smooth" });
-    }
+    if (node) node.scrollTo({ top: node.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    // focus mini input when the mini popup opens
     if (miniOpen) {
       setTimeout(() => miniInputRef.current?.focus(), 80);
     }
   }, [miniOpen]);
 
   useEffect(() => {
-    // cleanup on unmount
     return () => {
       timeouts.current.forEach((t) => window.clearTimeout(t));
       timeouts.current = [];
@@ -117,7 +103,6 @@ export default function ChatDemo(): JSX.Element {
   };
 
   const handleSampleSend = (q: string) => {
-    // friendly UX: show the sample briefly then send automatically
     pushMessage({
       text: q,
       sender: "user",
@@ -149,8 +134,158 @@ export default function ChatDemo(): JSX.Element {
         animate: { opacity: 1, y: 0, transition: { duration: 0.22 } },
       };
 
+  /* ----------------- MiniPopup: rendered into document.body via portal ----------------- */
+  function MiniPopup() {
+    if (typeof document === "undefined") return null; // SSR guard
+    return createPortal(
+      <AnimatePresence>
+        {miniOpen && (
+          <motion.aside
+            id="pearni-mini"
+            key="pearni-mini"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={popupVars}
+            role="dialog"
+            aria-label="pearNI mini assistant"
+            // NOTE: small but important width/position safety:
+            // max-w uses calc so it never exceeds the viewport; prevents clipping.
+            className="fixed right-5 bottom-20 z-50 w-auto max-w-[min(420px,calc(100vw-48px))]"
+          >
+            <div className="glass-card rounded-xl overflow-hidden shadow-lg">
+              <div className="flex items-start justify-between p-3 border-b border-white/10">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
+                    <i className="bx bxs-pear text-white text-sm" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-gray-900 truncate">
+                      pearNI Assistant
+                    </div>
+                    <div className="text-xs text-gray-600 truncate">
+                      Quick demo · ask a short question
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setMiniOpen(false)}
+                    aria-label="Close mini assistant"
+                    className="p-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                  >
+                    <i className="bx bx-x text-gray-700" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-3">
+                <p className="text-sm text-gray-700 mb-3">
+                  Welcome — try a sample or open the full demo for more
+                  features.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                  {SAMPLE_QUESTIONS.slice(0, 2).map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => handleSampleSend(q)}
+                      className="w-full text-left px-3 py-2 rounded-lg bg-white/6 hover:bg-white/8 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                    >
+                      <div className="text-sm font-medium text-gray-900 break-words">
+                        {q}
+                      </div>
+                      <div className="text-xs text-gray-500">Quick sample</div>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => {
+                      setMiniOpen(false);
+                      openFullDemo();
+                    }}
+                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold text-sm shadow"
+                  >
+                    <i className="bx bx-rocket" /> Open full demo
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.location.hash = "#about";
+                      setMiniOpen(false);
+                    }}
+                    className="px-3 py-2 rounded-md bg-white/6 text-sm text-gray-900 font-medium hover:bg-white/8"
+                  >
+                    Learn
+                  </button>
+                </div>
+
+                <div>
+                  <label htmlFor="mini-input" className="sr-only">
+                    Quick question
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="mini-input"
+                      ref={miniInputRef}
+                      type="text"
+                      placeholder="Ask a short question..."
+                      className="flex-1 rounded-full px-3 py-2 bg-white/6 text-sm placeholder-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          const val = (
+                            e.target as HTMLInputElement
+                          ).value.trim();
+                          if (!val) return;
+                          pushMessage({
+                            text: val,
+                            sender: "user",
+                            timestamp: new Date().toISOString(),
+                          });
+                          simulateAi(val);
+                          (e.target as HTMLInputElement).value = "";
+                        }
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const el = document.getElementById(
+                          "mini-input",
+                        ) as HTMLInputElement | null;
+                        const val = el?.value.trim() ?? "";
+                        if (!val) return;
+                        pushMessage({
+                          text: val,
+                          sender: "user",
+                          timestamp: new Date().toISOString(),
+                        });
+                        simulateAi(val);
+                        if (el) el.value = "";
+                      }}
+                      className="px-3 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-sm"
+                    >
+                      Ask
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-3 py-2 border-t border-white/8 text-xs text-gray-500">
+                Responses are demo-generated and not professional advice.
+              </div>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>,
+      document.body,
+    );
+  }
+
+  /* ------------------------------------------------------------------------------------ */
+
   return (
-    <section id="demo" className="py-12 md:py-20">
+    <section id="demo" className="py-12 md:py-20 ">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
@@ -163,7 +298,7 @@ export default function ChatDemo(): JSX.Element {
           </p>
         </div>
 
-        {/* Main chat card (kept concise) */}
+        {/* Main chat card */}
         <div className="glass-card rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between p-4 md:p-5 border-b border-white/10">
             <div className="flex items-center gap-3">
@@ -186,7 +321,6 @@ export default function ChatDemo(): JSX.Element {
                 onClick={openFullDemo}
                 className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-blue-500 to-violet-600 text-white text-sm shadow"
               >
-                {" "}
                 <i className="bx bx-rocket" /> Open NASA chat
               </button>
 
@@ -273,150 +407,10 @@ export default function ChatDemo(): JSX.Element {
         </div>
       </div>
 
-      {/* MINI POPUP (FIXED) */}
-      <AnimatePresence>
-        {miniOpen && (
-          <motion.aside
-            id="pearni-mini"
-            key="pearni-mini"
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={popupVars}
-            className="fixed right-5 bottom-20 z-50 w-full max-w-[92vw] md:max-w-xs"
-            role="dialog"
-            aria-label="pearNI mini assistant"
-          >
-            <div className="glass-card rounded-xl overflow-hidden shadow-lg">
-              {/* header */}
-              <div className="flex items-start justify-between p-3 border-b border-white/10">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                    <i className="bx bxs-pear text-white text-sm" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold text-gray-900 truncate">
-                      pearNI Assistant
-                    </div>
-                    <div className="text-xs text-gray-600 truncate">
-                      Quick demo · ask a short question
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setMiniOpen(false)}
-                    aria-label="Close mini assistant"
-                    className="p-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                  >
-                    <i className="bx bx-x text-gray-700" />
-                  </button>
-                </div>
-              </div>
+      {/* Portal popup - will render into document.body (prevents being clipped) */}
+      <MiniPopup />
 
-              {/* body */}
-              <div className="p-3">
-                <p className="text-sm text-gray-700 mb-3">
-                  Welcome — try a sample or open the full demo for more
-                  features.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-                  {SAMPLE_QUESTIONS.slice(0, 2).map((q) => (
-                    <button
-                      key={q}
-                      onClick={() => handleSampleSend(q)}
-                      className="w-full text-left px-3 py-2 rounded-lg bg-white/6 hover:bg-white/8 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                    >
-                      <div className="text-sm font-medium text-gray-900 break-words">
-                        {q}
-                      </div>
-                      <div className="text-xs text-gray-500">Quick sample</div>
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex gap-2 mb-3">
-                  <button
-                    onClick={() => {
-                      setMiniOpen(false);
-                      openFullDemo();
-                    }}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md bg-gradient-to-r from-blue-600 to-violet-600 text-white font-semibold text-sm shadow"
-                  >
-                    {" "}
-                    <i className="bx bx-rocket" /> Open full demo
-                  </button>
-                  <button
-                    onClick={() => {
-                      window.location.hash = "#about";
-                      setMiniOpen(false);
-                    }}
-                    className="px-3 py-2 rounded-md bg-white/6 text-sm text-gray-900 font-medium hover:bg-white/8"
-                  >
-                    Learn
-                  </button>
-                </div>
-
-                <div>
-                  <label htmlFor="mini-input" className="sr-only">
-                    Quick question
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      id="mini-input"
-                      ref={miniInputRef}
-                      type="text"
-                      placeholder="Ask a short question..."
-                      className="flex-1 rounded-full px-3 py-2 bg-white/6 text-sm placeholder-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          const val = (
-                            e.target as HTMLInputElement
-                          ).value.trim();
-                          if (!val) return;
-                          pushMessage({
-                            text: val,
-                            sender: "user",
-                            timestamp: new Date().toISOString(),
-                          });
-                          simulateAi(val);
-                          (e.target as HTMLInputElement).value = "";
-                        }
-                      }}
-                    />
-                    <button
-                      onClick={() => {
-                        const el = document.getElementById(
-                          "mini-input",
-                        ) as HTMLInputElement | null;
-                        const val = el?.value.trim() ?? "";
-                        if (!val) return;
-                        pushMessage({
-                          text: val,
-                          sender: "user",
-                          timestamp: new Date().toISOString(),
-                        });
-                        simulateAi(val);
-                        if (el) el.value = "";
-                      }}
-                      className="px-3 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white text-sm"
-                    >
-                      Ask
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-3 py-2 border-t border-white/8 text-xs text-gray-500">
-                Responses are demo-generated and not professional advice.
-              </div>
-            </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
-      {/* mini toggle button (separate from main FAB) */}
+      {/* mini toggle button (separate FAB) */}
       <div className="fixed right-5 bottom-5 md:bottom-6 z-50">
         <button
           onClick={() => setMiniOpen((v) => !v)}

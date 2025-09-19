@@ -325,6 +325,37 @@ body {
   box-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
 }
 
+.gradient-text {
+  background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.backdrop-blur-sm {
+  backdrop-filter: blur(6px);
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+}
+.gradient-text {
+  background: linear-gradient(90deg, #06b6d4, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 /* Apple-style smooth transitions */
 * {
   transition-property: transform, opacity, background, border, box-shadow;

@@ -1,339 +1,255 @@
+// FeatureShowcase.fixed.tsx
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+
+/**
+ * Fixed FeatureShowcase
+ * - Ensures both columns stretch to the same height and the preview doesn't collapse.
+ * - Clean, image-free preview and responsive behavior.
+ */
 
 interface FeatureCard {
   id: string;
   title: string;
   description: string;
   icon: string;
-  image?: string;
   color: string;
 }
 
-const FeatureShowcase: React.FC = () => {
-  const [activeFeature, setActiveFeature] = useState<number>(0);
+const FEATURES: FeatureCard[] = [
+  {
+    id: "shortcuts",
+    title: "Keyboard shortcuts",
+    description: "Work efficiently with instant access to common actions.",
+    icon: "bx-command",
+    color: "from-orange-400 to-red-400",
+  },
+  {
+    id: "planner",
+    title: "Team Planner",
+    description: "View all tasks in a centralized team calendar.",
+    icon: "bx-calendar",
+    color: "from-blue-400 to-cyan-400",
+  },
+  {
+    id: "timeblocking",
+    title: "Time-blocking",
+    description: "Turn tasks into focused time blocks for better productivity.",
+    icon: "bx-time",
+    color: "from-purple-400 to-pink-400",
+  },
+  {
+    id: "notifications",
+    title: "Notifications",
+    description: "Receive instant updates on important changes.",
+    icon: "bx-bell",
+    color: "from-teal-400 to-green-400",
+  },
+];
+
+const listCardVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.05, duration: 0.32 },
+  }),
+};
+
+const previewVariants = {
+  hidden: { opacity: 0, y: 8, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4 } },
+  exit: { opacity: 0, y: -8, scale: 0.99, transition: { duration: 0.25 } },
+};
+
+export default function FeatureShowcaseFixed(): JSX.Element {
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const reduce = useReducedMotion();
   const listRef = useRef<HTMLDivElement | null>(null);
-  const featureRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
-  const features: FeatureCard[] = [
-    {
-      id: "shortcuts",
-      title: "Keyboard shortcuts",
-      description: "Work efficiently with instant access to common actions.",
-      icon: "bx-command",
-      image: "/lovable-uploads/81ca961c-0935-4ccb-8d72-80aaf675707b.png",
-      color: "from-orange-500 to-red-500",
-    },
-    {
-      id: "planner",
-      title: "Team Planner",
-      description:
-        "Keep track of the bigger picture by viewing all individual tasks in one centralized team calendar.",
-      icon: "bx-calendar",
-      image: "/lovable-uploads/81ca961c-0935-4ccb-8d72-80aaf675707b.png",
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      id: "timeblocking",
-      title: "Time-blocking",
-      description:
-        "Transform daily tasks into structured time blocks for focused productivity.",
-      icon: "bx-time",
-      image: "/lovable-uploads/81ca961c-0935-4ccb-8d72-80aaf675707b.png",
-      color: "from-purple-500 to-pink-500",
-    },
-    {
-      id: "notifications",
-      title: "Notifications",
-      description:
-        "Keep up to date with any changes by receiving instant notifications.",
-      icon: "bx-bell",
-      image: "/lovable-uploads/81ca961c-0935-4ccb-8d72-80aaf675707b.png",
-      color: "from-teal-500 to-green-500",
-    },
-  ];
-
-  // keyboard navigation for feature list (Up/Down/Home/End)
+  // keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const activeEl = document.activeElement;
-      if (featureRefs.current.includes(activeEl as HTMLButtonElement)) {
-        if (e.key === "ArrowDown") {
-          e.preventDefault();
-          const idx = featureRefs.current.indexOf(
-            activeEl as HTMLButtonElement,
-          );
-          const next = (idx + 1) % features.length;
-          featureRefs.current[next]?.focus();
-          setActiveFeature(next);
-        }
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          const idx = featureRefs.current.indexOf(
-            activeEl as HTMLButtonElement,
-          );
-          const prev = (idx - 1 + features.length) % features.length;
-          featureRefs.current[prev]?.focus();
-          setActiveFeature(prev);
-        }
-        if (e.key === "Home") {
-          e.preventDefault();
-          featureRefs.current[0]?.focus();
-          setActiveFeature(0);
-        }
-        if (e.key === "End") {
-          e.preventDefault();
-          featureRefs.current[features.length - 1]?.focus();
-          setActiveFeature(features.length - 1);
-        }
+      const activeEl = document.activeElement as HTMLButtonElement | null;
+      const idx = itemRefs.current.indexOf(activeEl);
+      if (idx === -1) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const next = (idx + 1) % FEATURES.length;
+        setActiveIndex(next);
+        itemRefs.current[next]?.focus();
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const prev = (idx - 1 + FEATURES.length) % FEATURES.length;
+        setActiveIndex(prev);
+        itemRefs.current[prev]?.focus();
+      }
+      if (e.key === "Home") {
+        e.preventDefault();
+        setActiveIndex(0);
+        itemRefs.current[0]?.focus();
+      }
+      if (e.key === "End") {
+        e.preventDefault();
+        setActiveIndex(FEATURES.length - 1);
+        itemRefs.current[FEATURES.length - 1]?.focus();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [features.length]);
+  }, []);
 
-  // keep focused tab visible in horizontal list (mobile)
+  // keep active pill visible on small screens
   useEffect(() => {
-    const btn = featureRefs.current[activeFeature];
-    if (btn && listRef.current) {
-      const btnRect = btn.getBoundingClientRect();
-      const listRect = listRef.current.getBoundingClientRect();
-      if (btnRect.left < listRect.left || btnRect.right > listRect.right) {
-        btn.scrollIntoView({ behavior: "smooth", inline: "center" });
-      }
+    const btn = itemRefs.current[activeIndex];
+    if (!btn || !listRef.current) return;
+    const btnRect = btn.getBoundingClientRect();
+    const listRect = listRef.current.getBoundingClientRect();
+    if (btnRect.left < listRect.left || btnRect.right > listRect.right) {
+      btn.scrollIntoView({ behavior: "smooth", inline: "center" });
     }
-  }, [activeFeature]);
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 12 },
-    visible: (i = 0) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay: i * 0.06, duration: 0.36 },
-    }),
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.96 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.45 } },
-    exit: { opacity: 0, scale: 0.98, transition: { duration: 0.28 } },
-  };
+  }, [activeIndex]);
 
   return (
     <section id="feature-showcase" className="py-12 px-4 md:py-20">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
+      <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10 md:mb-16"
+          className="text-center mb-10"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
             Experience pearNI in <span className="gradient-text">Action</span>
           </h2>
-          <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-            Discover how pearNI transforms your workflow with intelligent
-            features designed for the future.
+          <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
+            Intelligent features, cleanly presented for faster decision-making.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Feature list (left) */}
-          <div className="space-y-4">
+        {/* IMPORTANT: items-stretch ensures both columns have the same height */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          {/* Left: list */}
+          <div className="flex flex-col justify-start">
             <div
               ref={listRef}
               role="list"
               aria-label="Feature list"
-              className="flex gap-3 overflow-x-auto no-scrollbar pb-1 sm:overflow-visible sm:block"
+              className="flex gap-3 overflow-x-auto no-scrollbar pb-1 sm:block sm:overflow-visible"
             >
-              {/* Horizontal compact pills for small screens */}
-              {features.map((f, idx) => (
+              {FEATURES.map((f, idx) => (
                 <button
                   key={f.id + "-pill"}
-                  onClick={() => setActiveFeature(idx)}
-                  className={`sm:hidden flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-full text-sm font-semibold transition ${
-                    idx === activeFeature
-                      ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow"
-                      : "glass text-gray-800 hover:bg-white/10"
-                  }`}
-                  aria-pressed={idx === activeFeature}
+                  onClick={() => setActiveIndex(idx)}
+                  aria-pressed={idx === activeIndex}
+                  className={`sm:hidden inline-flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-full text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${idx === activeIndex ? "bg-gradient-to-r from-cyan-500 to-teal-500 text-white shadow" : "bg-white/6 text-gray-800 hover:bg-white/10"}`}
                 >
-                  <i className={`bx ${f.icon}`} aria-hidden />
+                  <i className={`bx ${f.icon} text-lg`} aria-hidden />
                   <span>{f.title}</span>
                 </button>
               ))}
             </div>
 
-            {/* Vertical card list on sm+ */}
-            <div className="hidden sm:block space-y-4">
-              {features.map((feature, index) => {
-                const active = index === activeFeature;
+            <div className="hidden sm:block mt-4 space-y-3 h-full">
+              {FEATURES.map((f, idx) => {
+                const active = idx === activeIndex;
                 return (
                   <motion.button
-                    key={feature.id}
-                    custom={index}
+                    key={f.id}
+                    ref={(el) => (itemRefs.current[idx] = el)}
+                    onClick={() => setActiveIndex(idx)}
+                    role="button"
+                    aria-pressed={active}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
-                    variants={cardVariants}
-                    onClick={() => setActiveFeature(index)}
-                    ref={(el) => (featureRefs.current[index] = el)}
-                    role="button"
-                    aria-pressed={active}
-                    className={`w-full text-left p-4 rounded-xl transition-transform duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
-                      active
-                        ? "ring-2 ring-cyan-300 bg-white/30 scale-100 shadow-md"
-                        : "glass hover:scale-[1.02]"
-                    }`}
+                    variants={listCardVariants}
+                    custom={idx}
+                    className={`w-full text-left p-4 rounded-xl transition-transform duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${active ? "bg-white shadow-md ring-1 ring-gray-100" : "bg-white/40 backdrop-blur-sm hover:scale-[1.01]"}`}
                   >
                     <div className="flex items-start gap-4">
-                      <motion.div
-                        whileHover={!reduce ? { scale: 1.06 } : {}}
-                        whileTap={!reduce ? { scale: 0.98 } : {}}
-                        className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-r ${feature.color}`}
+                      <div
+                        className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-r ${f.color} text-white shadow-sm`}
                         aria-hidden
                       >
-                        <i
-                          className={`bx ${feature.icon} text-white text-xl`}
-                        />
-                      </motion.div>
-
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                          {feature.title}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          {feature.description}
-                        </p>
+                        <i className={`bx ${f.icon} text-xl`} />
                       </div>
 
-                      <div className="flex items-center">
-                        {active && (
-                          <span
-                            className="w-3 h-3 rounded-full bg-cyan-400 ml-3"
-                            aria-hidden
-                          />
-                        )}
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-4">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {f.title}
+                          </h3>
+                          <div className="text-sm text-gray-400">
+                            {idx + 1}/{FEATURES.length}
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {f.description}
+                        </p>
                       </div>
                     </div>
                   </motion.button>
                 );
               })}
             </div>
-
-            {/* Compact stacked list for xs devices (under sm) */}
-            <div className="sm:hidden mt-2">
-              {features.map((f, i) => (
-                <div
-                  key={f.id + "-stack"}
-                  className={`p-3 rounded-lg mb-2 transition ${i === activeFeature ? "bg-white/20 ring-1 ring-cyan-300" : "glass"}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-r ${f.color}`}
-                    >
-                      <i className={`bx ${f.icon} text-white`} />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-sm">{f.title}</h4>
-                        <button
-                          onClick={() => setActiveFeature(i)}
-                          className="text-xs px-2 py-1 rounded-full bg-white/10"
-                          aria-label={`Activate ${f.title}`}
-                        >
-                          Show
-                        </button>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {f.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Preview (right) */}
-          <div className="relative">
+          {/* Right: clean preview (no image). h-full so it fills the column. */}
+          <div className="flex items-center justify-center">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="glass-card rounded-2xl p-4 md:p-6 h-[420px] md:h-[520px] lg:h-[560px] overflow-hidden"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={previewVariants}
+              className="bg-white/60 backdrop-blur-sm border border-gray-100 rounded-2xl p-6 h-full w-full flex items-center justify-center"
             >
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={features[activeFeature].id}
-                  variants={imageVariants}
+                  key={FEATURES[activeIndex].id}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  className="relative h-full w-full rounded-xl overflow-hidden flex flex-col md:flex-row items-center justify-center"
+                  variants={previewVariants}
+                  className="w-full h-full flex flex-col items-center justify-center gap-4 px-4"
                 >
-                  {/* Left: visual */}
-                  {/* If you have real images, use <img> or Next/Image; fallback to gradient */}
-                  {/* Right: copy & CTA */}
-                  <div className="w-full md:w-1/2 px-4 md:px-6 py-4 md:py-6 text-center md:text-left">
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-                      {features[activeFeature].title}
+                  <div
+                    className={`w-28 h-28 rounded-2xl flex items-center justify-center bg-gradient-to-r ${FEATURES[activeIndex].color} text-white shadow-md`}
+                    aria-hidden
+                  >
+                    <i
+                      className={`bx ${FEATURES[activeIndex].icon} text-4xl`}
+                    />
+                  </div>
+
+                  <div className="max-w-xl text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {FEATURES[activeIndex].title}
                     </h3>
-                    <p className="text-sm md:text-base text-gray-600 mb-4">
-                      {features[activeFeature].description}
+                    <p className="text-sm text-gray-600 mb-3">
+                      {FEATURES[activeIndex].description}
                     </p>
 
-                    <p className="text-sm text-gray-500 mb-5 max-w-md mx-auto md:mx-0">
-                      Interactive demo coming soon — experience the full power
-                      of pearNI's{" "}
-                      <strong className="text-gray-700">
-                        {features[activeFeature].title.toLowerCase()}
-                      </strong>
-                      .
-                    </p>
+                    <ul className="text-sm text-gray-700 space-y-2 inline-block text-left">
+                      <li>• Fast & intuitive interactions</li>
+                      <li>• Secure by design</li>
+                      <li>• Seamless team collaboration</li>
+                    </ul>
 
-                    <div className="flex justify-center md:justify-start gap-3">
-                      <button
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
-                        aria-label={`Try demo for ${features[activeFeature].title}`}
-                      >
-                        <i className="bx bx-play" aria-hidden />
-                        Try Demo
+                    <div className="mt-5 flex gap-3 justify-center">
+                      <button className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500 to-teal-500 text-white font-semibold shadow-sm hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">
+                        <i className="bx bx-play" /> Try demo
                       </button>
-
                       <button
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/6 text-gray-800 font-medium hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200"
                         onClick={() => alert("More info coming soon")}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/6 text-gray-800 font-medium hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200"
                       >
                         Learn more
                       </button>
                     </div>
                   </div>
-
-                  {/* Decorative floating dots (reduced-motion friendly) */}
-                  {!reduce && (
-                    <>
-                      <motion.div
-                        className="absolute -top-3 -right-3 w-4 h-4 rounded-full bg-cyan-300/50"
-                        animate={{ y: [0, -8, 0] }}
-                        transition={{ duration: 3.8, repeat: Infinity }}
-                        aria-hidden
-                      />
-                      <motion.div
-                        className="absolute -bottom-3 -left-3 w-6 h-6 rounded-full bg-teal-300/40"
-                        animate={{ y: [0, 10, 0] }}
-                        transition={{
-                          duration: 4.4,
-                          repeat: Infinity,
-                          delay: 0.8,
-                        }}
-                        aria-hidden
-                      />
-                    </>
-                  )}
                 </motion.div>
               </AnimatePresence>
             </motion.div>
@@ -342,6 +258,4 @@ const FeatureShowcase: React.FC = () => {
       </div>
     </section>
   );
-};
-
-export default FeatureShowcase;
+}
